@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('rol_id');
             $table->string('nombre');
-            $table->string('rfc');
+            $table->string('rfc')->nullable();
             $table->string('telefono');
             $table->string('email')->unique();
             $table->enum('tipo_puesto', ['BASE', 'INTERNO'])->default('BASE');
@@ -29,7 +29,6 @@ return new class extends Migration
             $table->text('domicilio')->nullable();
             $table->string('horario')->nullable();
             $table->string('password');
-            $table->rememberToken();
             $table->timestamps();
 
             // Llave foránea

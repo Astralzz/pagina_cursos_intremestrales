@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\consoleController;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -21,11 +22,18 @@ Artisan::command('inspire', function () {
 
 //SECTION -  Comandos artisan extras
 
+//* -> php artisan insert-data-primary
+
 // Insertar datos primarios
 Artisan::command('insert-data-primary', function () {
     try {
 
-        $this->info('Datos primarios insertados en las tablas padre.');
+        $consoleController = new consoleController();
+        $consoleController->generarDatosPrimariosGlobales();
+
+        $this->info('Éxito, los datos se insertaron correctamente.');
+
+        //! - Error
     } catch (Exception $e) {
         $this->error('Ocurrió un error: ' . $e->getMessage());
     }

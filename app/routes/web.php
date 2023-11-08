@@ -13,6 +13,38 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// * Index
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
+})->name('index');
+
+// * 404
+Route::fallback(function () {
+    return view('index');
+})->name(("404"));
+
+
+//SECTION - Usuarios
+Route::group(['prefix' => 'usuario'], function () {
+    // //Vista de l login de los sub admin
+    // Route::get('login', function () {
+    //     //Retornamos la tabla y la variable arrayNoticias
+    //     return view('pages.admin.login');
+    // })->name('vista.login.administradores');
+    //Login sub admin
+
+    //STUB - Login
+    Route::post(
+        'acceder',
+        [administradorController::class, 'login']
+    )->name('usuario.login');
+
+    // //Cerra sesión
+    // Route::get(
+    //     'cerrar',
+    //     [
+    //         administradorController::class,
+    //         'cerrar'
+    //     ]
+    // )->name('administrador.salir');
 });

@@ -1,0 +1,96 @@
+/* Quitar leyenda de los file input */
+input[type="file"]::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+/* input[type="search"] {
+     width: 200%;
+}
+
+input[title] {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    padding: 5px;
+} */
+
+/* MENU IZQUIERDO */
+.menu-izquierdo {
+    /* Color del menu */
+    background-color: linear-gradient(
+        left,
+        #1c3b70 0%,
+        #2d5aa9 62%,
+        #275dbb 100%
+    );
+    background: linear-gradient(to bottom, #1c3b70, #4f6697);
+}
+
+.contenedor-principal {
+    /* Color del menu */
+    background-color: white;
+}
+
+.img-inferior {
+    position: absolute;
+    top: 80%;
+    width: 70%;
+    height: 20%;
+}
+
+/* input[type="file"]::before {
+    content: "Seleccionar archivo";
+    display: inline-block;
+    background: #007bff;
+    color: #fff;
+    padding: 6px 12px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+input[type="file"]:hover::before {
+    background: #0062cc;
+    border-color: #005cbf;
+} */
+
+/* * Parte del reseteo de la contraseña */
+.contenedor-form-reset-pass {
+    background: linear-gradient(to bottom, #1c3b70, #4f6697);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.contenedor-form-reset-pass .card-principal {
+    background: linear-gradient(to bottom, #d93636, #922d2d);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    width: 80%;
+    color: white;
+}
+
+.contenedor-form-reset-pass .img-app {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+
+.contenedor-form-reset-pass .matricula-app {
+    text-align: center;
+    font-weight: bold;
+}
