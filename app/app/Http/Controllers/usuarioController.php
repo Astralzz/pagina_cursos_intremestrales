@@ -9,7 +9,6 @@ use Dotenv\Exception\ValidationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
 //TODO - Controlador de usuario
 class usuarioController extends Controller
@@ -22,22 +21,23 @@ class usuarioController extends Controller
     private $validaciones = [
         'nombre' => 'required|string|min:5|max:240',
         'password' => 'required|string|min:8|max:16',
+        'password2' => 'required|string|min:8|max:16',
         'rol_id' => 'required|numeric',
         'rfc' => 'nullable|string|min:12|max:12',
         'telefono' => 'required|numeric|digits:10',
-        'email' => 'required|email|string|min:5|max:120',
-        'clave_propuesta' => 'nullable|numeric|min:12|max:12',
-        'tipo_puesto' => 'nullable|enum_value:BASE,INTERNO',
-        'nivel_puesto' => 'nullable|enum_value:FUNCIONARIO,ENLACE,OPERATIVO',
+        'email' => 'required|unique:users,email|email|string|min:5|max:120',
+        'clave_propuesta' => 'nullable|numeric|digits:8',
+        'tipo_puesto' => 'nullable|in:BASE,INTERNO',
+        'nivel_puesto' => 'nullable|in:FUNCIONARIO,ENLACE,OPERATIVO',
         'institucion' => 'required|string|min:5|max:120',
         'departamento' => 'nullable|string|min:5|max:120',
         'nombre_jefe' => 'nullable|string|min:5|max:120',
         'horario' => 'nullable|string|min:5|max:120',
         'domicilio' => 'nullable|string|min:5',
-        'licenciatura' => 'nullable|boolean',
-        'maestria' => 'nullable|boolean',
-        'doctorado' => 'nullable|boolean',
-        'postgrado' => 'nullable|boolean',
+        'licenciatura' => 'nullable|in:on,off',
+        'maestria' => 'nullable|in:on,off',
+        'doctorado' => 'nullable|in:on,off',
+        'postgrado' => 'nullable|in:on,off',
     ];
 
     // * Respuestas de validaciones
@@ -50,6 +50,10 @@ class usuarioController extends Controller
         'password.string' => 'El campo contraseña debe ser una cadena de texto.',
         'password.min' => 'El campo contraseña debe tener al menos 8 caracteres.',
         'password.max' => 'El campo contraseña debe tener como máximo 16 caracteres.',
+        'password2.required' => 'El campo de la segunda contraseña es requerido.',
+        'password2.string' => 'El campo de la segunda contraseña debe ser una cadena de texto.',
+        'password2.min' => 'El campo de la segunda contraseña debe tener al menos 8 caracteres.',
+        'password2.max' => 'El campo de la segunda contraseña debe tener como máximo 16 caracteres.',
         'rol_id.required' => 'El campo rol es requerido.',
         'rol_id.numeric' => 'El campo rol debe ser un número.',
         'rfc.string' => 'El campo RFC debe ser una cadena de texto.',
@@ -59,15 +63,15 @@ class usuarioController extends Controller
         'telefono.numeric' => 'El campo teléfono debe ser un número.',
         'telefono.digits' => 'El campo teléfono debe tener 10 dígitos.',
         'email.required' => 'El campo email es requerido.',
+        'email.unique' => 'El email proporcionado ya se encentra registrado.',
         'email.email' => 'El campo email debe ser una dirección de correo válida.',
         'email.string' => 'El campo email debe ser una cadena de texto.',
         'email.min' => 'El campo email debe tener al menos 5 caracteres.',
         'email.max' => 'El campo email debe tener como máximo 120 caracteres.',
         'clave_propuesta.numeric' => 'El campo clave propuesta debe ser un número.',
-        'clave_propuesta.min' => 'El campo clave propuesta debe tener 12 caracteres.',
-        'clave_propuesta.max' => 'El campo clave propuesta debe tener 12 caracteres.',
-        'tipo_puesto.enum_value' => 'El campo tipo_puesto debe ser "BASE" o "INTERNO".',
-        'nivel_puesto.enum_value' => 'El campo nivel_puesto debe ser "FUNCIONARIO", "ENLACE" o "OPERATIVO".',
+        'clave_propuesta.digits' => 'El campo clave propuesta debe tener 8 dígitos.',
+        'tipo_puesto.in' => 'El campo tipo de puesto debe ser "BASE" o "INTERNO".',
+        'nivel_puesto.in' => 'El campo nivel de puesto debe ser "FUNCIONARIO", "ENLACE" o "OPERATIVO".',
         'institucion.required' => 'El campo institución es requerido.',
         'institucion.string' => 'El campo institución debe ser una cadena de texto.',
         'institucion.min' => 'El campo institución debe tener al menos 5 caracteres.',
@@ -83,10 +87,10 @@ class usuarioController extends Controller
         'horario.max' => 'El campo horario debe tener como máximo 120 caracteres.',
         'domicilio.string' => 'El campo domicilio debe ser una cadena de texto.',
         'domicilio.min' => 'El campo domicilio debe tener al menos 5 caracteres.',
-        'licenciatura.boolean' => 'El campo Licenciatura debe ser un valor verdadero o falso (booleano).',
-        'maestria.boolean' => 'El campo Maestría debe ser un valor verdadero o falso (booleano).',
-        'doctorado.boolean' => 'El campo Doctorado debe ser un valor verdadero o falso (booleano).',
-        'postgrado.boolean' => 'El campo Postgrado debe ser un valor verdadero o falso (booleano).',
+        'licenciatura.in' => 'El campo Licenciatura debe ser un valor on.',
+        'maestria.in' => 'El campo Maestría debe ser un valor on.',
+        'doctorado.in' => 'El campo Doctorado debe ser un valor on.',
+        'postgrado.in' => 'El campo Postgrado debe ser un valor on.',
     ];
 
     //Constructor
@@ -109,6 +113,11 @@ class usuarioController extends Controller
 
             // Validamos
             $request->validate($this->validaciones, $this->respuestas);
+
+            // ? Contraseñas diferentes
+            if ($request->input('password') !== $request->input('password2')) {
+                return $this->catchErrorRegistro($request, 'Las contraseñas no coinciden.');
+            }
 
             // Creamos usuario
             $nuevoUsuario = new User([
@@ -134,25 +143,29 @@ class usuarioController extends Controller
             // Creamos estudio
             $nuevoEstudio = new Estudios_usuario([
                 'user_id' => $nuevoUsuario->id, // Asumiendo que tienes una relación "user_id" en la tabla de estudios
-                'licenciatura' => $request->input('licenciatura'),
-                'maestria' => $request->input('maestria'),
-                'doctorado' => $request->input('doctorado'),
-                'postgrado' => $request->input('postgrado'),
+                'licenciatura' => $request->input('licenciatura') === 'on',
+                'maestria' => $request->input('maestria') === 'on',
+                'doctorado' => $request->input('doctorado') === 'on',
+                'postgrado' => $request->input('postgrado') === 'on',
             ]);
 
             // Guardar el estudio en la base de datos
             $nuevoEstudio->save();
 
+            // * Éxito
+            return redirect()->back()
+                ->with('exito_formulario', 'El usuario se creo correctamente, ya puedes iniciar sesión');
+
             // Errores
         } catch (ValidationException $e) {
             // Manejo de otros errores
-            return $this->catchErrorRegistro($request, 'Error desconocido al crear el usuario -> ' . $e->getMessage());
+            return $this->catchErrorRegistro($request, 'Error de validación, ' . $e->getMessage());
         } catch (QueryException $e) {
             // Manejo de otros errores
-            return $this->catchErrorRegistro($request, 'Error desconocido al crear el usuario -> ' . $e->getMessage());
+            return $this->catchErrorRegistro($request, 'Error de query, ' . $e->getMessage());
         } catch (\Exception $e) {
             // Manejo de otros errores
-            return $this->catchErrorRegistro($request, 'Error desconocido al crear el usuario -> ' . $e->getMessage());
+            return $this->catchErrorRegistro($request, 'Error desconocido, ' . $e->getMessage());
         }
     }
 
@@ -171,6 +184,8 @@ class usuarioController extends Controller
                 'telefono',
                 'email',
                 'clave_propuesta',
+                'tipo_puesto',
+                'nivel_puesto',
                 'institucion',
                 'departamento',
                 'nombre_jefe',
