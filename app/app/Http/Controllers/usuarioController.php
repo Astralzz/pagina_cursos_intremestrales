@@ -103,6 +103,54 @@ class usuarioController extends Controller
     // * Login
     public function login(Request $request)
     {
+
+        try {
+            // Validamos datos
+            $request->validate([
+                'email' => 'required|email|string|min:5|max:120',
+                'password' => 'required|string|min:8|max:16',
+            ], [
+                'email.required' => 'El campo email es requerido.',
+                'email.email' => 'El campo email debe ser una dirección de correo válida.',
+                'email.string' => 'El campo email debe ser una cadena de texto.',
+                'email.min' => 'El campo email debe tener al menos 5 caracteres.',
+                'email.max' => 'El campo email debe tener como máximo 120 caracteres.',
+                'password.required' => 'El campo contraseña es requerido.',
+                'password.string' => 'El campo contraseña debe ser una cadena de texto.',
+                'password.min' => 'El campo contraseña debe tener al menos 8 caracteres.',
+                'password.max' => 'El campo contraseña debe tener como máximo 16 caracteres.',
+            ]);
+
+            //credenciales
+            $credentials = [
+                'email' => $request->input('email'),
+                'password' => $request->input('password'),
+            ];
+
+
+            // ? Verificamos
+            if (auth()->attempt($credentials)) {
+                // Autenticación exitosa
+                $usuario = auth()->user();
+
+                // Creamos sesión
+                $request->session()->put('usuario', $usuario);
+
+                // * Exito
+                return redirect()->back();
+            }
+
+            // ! Datos incorrectos
+            return $this->catchErrorLogin($request, 'Datos incorrectos.');
+
+            // ! - Errores
+        } catch (ValidationException $e) {
+            return $this->catchErrorLogin($request, 'Error de validación, ' . $e->getMessage());
+        } catch (QueryException $e) {
+            return $this->catchErrorLogin($request, 'Error de query, ' . $e->getMessage());
+        } catch (\Exception $e) {
+            return $this->catchErrorLogin($request, 'Error desconocido, ' . $e->getMessage());
+        }
     }
 
     // * Registro
@@ -156,15 +204,12 @@ class usuarioController extends Controller
             return redirect()->back()
                 ->with('exito_formulario', 'El usuario se creo correctamente, ya puedes iniciar sesión');
 
-            // Errores
+            // ! - Errores
         } catch (ValidationException $e) {
-            // Manejo de otros errores
             return $this->catchErrorRegistro($request, 'Error de validación, ' . $e->getMessage());
         } catch (QueryException $e) {
-            // Manejo de otros errores
             return $this->catchErrorRegistro($request, 'Error de query, ' . $e->getMessage());
         } catch (\Exception $e) {
-            // Manejo de otros errores
             return $this->catchErrorRegistro($request, 'Error desconocido, ' . $e->getMessage());
         }
     }
@@ -172,6 +217,16 @@ class usuarioController extends Controller
 
 
     //SECTION - Privadas ----------------
+
+    // ! - Error de login
+    private function catchErrorLogin(Request $request, $mensaje)
+    {
+        return redirect()->back()
+            ->withInput($request->only(
+                'email',
+            ))
+            ->with('error_login', $mensaje);
+    }
 
     // ! - Error de registro
     private function catchErrorRegistro(Request $request, $mensaje)

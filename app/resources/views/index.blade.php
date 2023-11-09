@@ -21,8 +21,15 @@
 <body>
 
     {{-- ? Existe una sesion --}}
-    @if (session('usuario'))
-        {{-- @include('recursos.vista_menu') --}}
+    @if (auth()->check())
+        @php
+            // Variable usuario
+            $usuario = auth()
+                ->user()
+                ->load('estudios', 'reconocimientos', 'cursos');
+        @endphp
+
+        @include('pages.home')
     @else
         @include('pages.login')
     @endif

@@ -29,6 +29,7 @@ return new class extends Migration
             $table->text('domicilio')->nullable();
             $table->string('horario')->nullable();
             $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
 
             // Llave foránea

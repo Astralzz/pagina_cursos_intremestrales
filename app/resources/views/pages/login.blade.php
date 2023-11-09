@@ -36,50 +36,49 @@
 
                     <br> <br>
 
-                    {{-- * LOGIN DEL SUB ADMMINISTRADOR --}}
+                    {{-- TODO - LOGIN DEL SUB ADMMINISTRADOR --}}
                     <form method="POST" action="{{ route('usuario.login') }}">
                         @csrf
 
                         {{-- Email --}}
                         <div class="form-floating mb-3">
-                            <input autocomplete="additional-name" value="{{ old('email') }}" minlength="4"
-                                maxlength="35" name="email" type="email" required autocomplete="email"
-                                class="form-control" id="floatingInput" placeholder="nombre@example.com">
-                            <label for="floatingInput">Email</label>
+                            <input value="{{ old('email') }}" minlength="5" required maxlength="120" name="email"
+                                type="email" autocomplete="email" class="form-control" id="email_input"
+                                placeholder="nombre@example.com">
+                            <label for="email_input">Email</label>
                         </div>
 
                         {{-- Password --}}
                         <div class="form-floating mb-3">
-                            <input autocomplete="additional-name" minlength="5" maxlength="16" name="password" required
-                                type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                            <label for="pas">Contraseña</label>
+                            <input name="password" required minlength="8" maxlength="16" type="password"
+                                class="form-control" id="input_pass" placeholder="Password">
+                            <label for="input_pass">Contraseña</label>
                         </div>
 
-                        {{-- Registro --}}
+                        {{-- * - Registro --}}
                         <div class="d-flex align-items-center">
                             <p class="boton_a boton_a_p">No tienes tus datos? <button type="button" class="boton_a"
-                                    data-bs-toggle="modal" data-bs-target="#modal_registro_usuario">Registrate</button></p>
+                                    data-bs-toggle="modal" data-bs-target="#modal_registro_usuario">Registrate</button>
+                            </p>
                         </div>
 
-
-                        {{-- * Boton de acceder --}}
+                        {{-- * - Boton de acceder --}}
                         <div class="d-grid">
                             <button class="btn btn-lg btn-danger btn-login text-uppercase fw-bold mb-2"
                                 type="submit">Acceder</button>
                         </div>
 
+                        {{-- ! - Alerta de error --}}
+                        @if (session('error_login'))
+                            <div class="alert alert-danger">
+                                {{ session('error_login') }}
+                            </div>
+                        @endif
+
                     </form>
 
                     {{-- Modal del formulario --}}
                     @include('components.modals.modal_formulario_usuario')
-
-                    {{-- Verificamos --}}
-                    @if (session('error_login'))
-                        <br />
-                        <div class="alert alert-danger">
-                            {{ session('error_login') }}
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>

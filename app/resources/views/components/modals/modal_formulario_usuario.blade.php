@@ -1,12 +1,22 @@
 {{-- * -  DATOS PHP --}}
 @php
     // * Variables
-    $variables = ['nombre', 'rol_id', 'rfc', 'telefono', 'email', 'clave_propuesta', 'tipo_puesto', 'nivel_puesto', 'institucion', 'departamento', 'nombre_jefe', 'horario', 'domicilio', 'licenciatura', 'maestria', 'doctorado', 'postgrado'];
+    $variables = ['nombre', 'rol_id', 'rfc', 'telefono', 'email', 'clave_propuesta', 'tipo_puesto', 'nivel_puesto', 'institucion', 'departamento', 'nombre_jefe', 'horario', 'domicilio'];
     // * Recorremos
     foreach ($variables as $variable) {
         // ? Existe usaurio
         if (isset($usuario)) {
             ${$variable} = $usuario->$variable ?? null;
+        } else {
+            ${$variable} = old($variable) ?? null;
+        }
+    }
+
+    // Recorrems estudios
+    foreach (['licenciatura', 'maestria', 'doctorado', 'postgrado'] as $variable) {
+        // ? Existe usaurio
+        if (isset($usuario)) {
+            ${$variable} = $usuario->estudios->$variable ? 'on' : null;
         } else {
             ${$variable} = old($variable) ?? null;
         }

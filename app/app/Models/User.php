@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 //TODO - Usuario
-class User extends Model
+class User extends Model implements Authenticatable
 {
 
     // Tabla
@@ -49,16 +50,54 @@ class User extends Model
 
     public function estudios()
     {
-        return $this->hasOne(EstudiosUsuario::class, 'user_id');
+        return $this->hasOne(Estudios_usuario::class, 'user_id');
     }
 
     public function reconocimientos()
     {
-        return $this->hasOne(ReconocimientosUsuario::class, 'user_id');
+        return $this->hasOne(Reconocimientos_usuario::class, 'user_id');
     }
 
     public function cursos()
     {
         return $this->hasMany(Curso::class, 'user_id');
+    }
+
+    //SECTION - Autenticación
+
+    // Identificador
+    public function getAuthIdentifierName()
+    {
+        return 'id';
+    }
+
+    // Contraseña
+    public function getAuthIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    // Contraseña
+    public function getAuthPassword()
+    {
+        return $this->password;
+    }
+
+    // Get token
+    public function getRememberToken()
+    {
+        return $this->remember_token;
+    }
+
+    // Set token
+    public function setRememberToken($value)
+    {
+        $this->remember_token = $value;
+    }
+
+    // Tabla token
+    public function getRememberTokenName()
+    {
+        return 'remember_token';
     }
 }
