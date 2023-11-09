@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\usuarioController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,8 +37,14 @@ Route::group(['prefix' => 'usuario'], function () {
     //STUB - Login
     Route::post(
         'acceder',
-        [administradorController::class, 'login']
+        [usuarioController::class, 'login']
     )->name('usuario.login');
+
+    //STUB - Registro
+    Route::post(
+        'registrar',
+        [usuarioController::class, 'registro']
+    )->name('usuario.registro');
 
     // //Cerra sesión
     // Route::get(
