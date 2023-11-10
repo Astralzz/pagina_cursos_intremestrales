@@ -2,114 +2,37 @@
 
 
 {{-- ? Existe un usuario? --}}
-{{-- @if (session('usuario'))
+@if (isset($usuario))
     @php
         $secciones = [
-            // Noticias
+            // Aceptar cursos
             [
-                'permiso' => session('usuario')->permiso_noticias,
-                'titulo' => 'Noticias',
-                'ref' => '#subNoticias',
+                'permiso' => $usuario->rol->is_admin,
+                'titulo' => 'Aceptar cursos',
+                'ruta' => route('index'),
                 'icono' => 'bi bi-journals',
-                'id' => 'subNoticias',
-                'subMenu' => [
-                    [
-                        'titulo' => 'Nueva noticia',
-                        'ruta' => route('vista.crear.noticia'),
-                    ],
-                    [
-                        'titulo' => 'Ver mis noticias',
-                        'ruta' => route('vista.tabla.admin.noticias', [
-                            'id_admin' => session('usuario')->id,
-                            'filas' => 10,
-                        ]),
-                    ],
-                ],
             ],
-            // Deportes
             [
-                'permiso' => session('usuario')->permiso_deportes,
-                'titulo' => 'Deportes',
-                'ref' => '#subDeportes',
-                'icono' => 'bi bi-circle',
-                'id' => 'subDeportes',
-                'subMenu' => [
-                    [
-                        'titulo' => 'Nuevo evento deportivo',
-                        'ruta' => route('vista.crear.deporte'),
-                    ],
-                    [
-                        'titulo' => 'Ver mi lista deportiva',
-                        'ruta' => route('vista.tabla.admin.deportes', [
-                            'id_admin' => session('usuario')->id,
-                            'filas' => 10,
-                        ]),
-                    ],
-                ],
+                'permiso' => true,
+                'titulo' => 'Crear nuevo curso',
+                'ruta' => route('index'),
+                'icono' => 'bi bi-journals',
             ],
-            // Eventos
             [
-                'permiso' => session('usuario')->permiso_eventos,
-                'titulo' => 'Eventos',
-                'ref' => '#subEventos',
-                'icono' => 'bi bi-calendar-date',
-                'id' => 'subEventos',
-                'subMenu' => [
-                    [
-                        'titulo' => 'Nuevo evento',
-                        'ruta' => route('vista.crear.evento'),
-                    ],
-                    [
-                        'titulo' => 'Ver mis eventos',
-                        'ruta' => route('vista.tabla.admin.eventos', ['id_admin' => session('usuario')->id, 'filas' => 10]),
-                    ],
-                ],
+                'permiso' => true,
+                'titulo' => 'Ver mis cursos',
+                'ruta' => route('index'),
+                'icono' => 'bi bi-journals',
             ],
-            // Culltura
             [
-                'permiso' => session('usuario')->permiso_cultura,
-                'titulo' => 'Cultura',
-                'ref' => '#subCultura',
-                'icono' => 'bi bi-palette',
-                'id' => 'subCultura',
-                'subMenu' => [
-                    [
-                        'titulo' => 'Nuevo evento cultural',
-                        'ruta' => route('vista.crear.cultura'),
-                    ],
-                    [
-                        'titulo' => 'Ver mis eventos culturales',
-                        'ruta' => route('vista.tabla.admin.culturales', [
-                            'id_admin' => session('usuario')->id,
-                            'filas' => 10,
-                        ]),
-                    ],
-                ],
-            ],
-            // Comedores
-            [
-                'permiso' => session('usuario')->permiso_comedores,
-                'titulo' => 'Comedores',
-                'ref' => '#subComedores',
-                'icono' => 'bi bi-cup-straw',
-                'id' => 'subComedores',
-                'subMenu' => [
-                    [
-                        'titulo' => 'Nuevo menu',
-                        'ruta' => route('vista.crear.comedor.menu'),
-                    ],
-                    [
-                        'titulo' => 'Ver mis menus',
-                        'ruta' => route('vista.tabla.admin.comedor.menu.global', [
-                            'id_admin' => session('usuario')->id,
-                            'filas' => 10,
-                        ]),
-                    ],
-                ],
+                'permiso' => true,
+                'titulo' => 'Ver los cursos disponibles',
+                'ruta' => route('index'),
+                'icono' => 'bi bi-journals',
             ],
         ];
     @endphp
-@endif --}}
+@endif
 
 {{-- * Vista -------------------------------- --}}
 <div class="container-fluid vh-100">
@@ -127,10 +50,11 @@
                 <div>
                     {{-- Imagen --}}
                     <img height="120px" alt="img" src="{{ asset('imgs/logoApp.png') }}" alt="img">
+
+                    <h4 class="fs-4 text-white">{{ $usuario->nombre ?? 'N/A' }}</h4>
                 </div>
 
                 <br>
-
 
                 {{-- *  Lista de secciones -------------------------------- --}}
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
@@ -156,36 +80,20 @@
                             @if ($seccion['permiso'])
                                 <li class="dropdown">
                                     {{-- * Encabezado  --}}
-                                    <a href="{{ $seccion['ref'] ?? '#' }}"
-                                        class="nav-link px-0 align-middle text-white dropdown-toggle" role="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a href="{{ $seccion['ruta'] ?? '#' }}"
+                                        class="nav-link px-0 align-middle text-white">
                                         {{-- Icono --}}
                                         <i class="{{ $seccion['icono'] ?? '' }}"></i>
                                         {{-- Texto --}}
                                         <span class="ms-1 d-none d-sm-inline">{{ $seccion['titulo' ?? '????'] }}</span>
                                     </a>
-
-                                    {{-- * Sub lista  --}}
-                                    <ul class="dropdown-menu" aria-labelledby="{{ $seccion['id'] ?? '' }}">
-                                        {{-- ? Tiene un sub menu? --}}
-                                        @if (isset($seccion['subMenu']))
-                                            {{-- Recorremos --}}
-                                            @foreach ($seccion['subMenu'] as $submenu)
-                                                {{-- Sub menu --}}
-                                                <li>
-                                                    <a href="{{ $submenu['ruta'] ?? '#' }}"
-                                                        class="dropdown-item">{{ $submenu['titulo'] ?? '???' }}</a>
-                                                </li>
-                                            @endforeach
-                                        @endif
-                                    </ul>
                                 </li>
                             @endif
                         @endforeach
 
                         {{-- * Cerrar sesion --}}
                         <li>
-                            <a href="{{ route('administrador.salir') }}" class="nav-link px-0 align-middle text-white">
+                            <a href="{{ route('usuario.exit') }}" class="nav-link px-0 align-middle text-white">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span class="ms-1 d-none d-sm-inline">Cerrar sesión</span>
                             </a>
@@ -199,7 +107,7 @@
 
         </div>
 
-        {{-- todo ---------------- Contenido principal ---------------- --}}
-        {{-- @include('recursos.elementos.cuerpo_principal') --}}
+        {{-- TODO - Contenido principal --}}
+        @include('components.cuerpo_app')
     </div>
 </div>

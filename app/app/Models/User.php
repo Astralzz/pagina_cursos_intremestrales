@@ -43,7 +43,7 @@ class User extends Model implements Authenticatable
     // Pertenece a
     public function rol()
     {
-        return $this->belongsTo(RoleUsuario::class, 'rol_id');
+        return $this->belongsTo(Rol_usuario::class, 'rol_id');
     }
 
     // Tiene ....

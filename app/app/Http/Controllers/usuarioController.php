@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Estudios_usuario;
+use App\Models\Rol_usuario;
 use App\Models\User;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Database\QueryException;
@@ -38,6 +39,7 @@ class usuarioController extends Controller
         'maestria' => 'nullable|in:on,off',
         'doctorado' => 'nullable|in:on,off',
         'postgrado' => 'nullable|in:on,off',
+        'admin_key' => 'nullable|numeric|digits:12',
     ];
 
     // * Respuestas de validaciones
@@ -91,6 +93,8 @@ class usuarioController extends Controller
         'maestria.in' => 'El campo Maestría debe ser un valor on.',
         'doctorado.in' => 'El campo Doctorado debe ser un valor on.',
         'postgrado.in' => 'El campo Postgrado debe ser un valor on.',
+        'admin_key.numeric' => 'El campo clave administrador debe ser numérica.',
+        'admin_key.digits' => 'El campo clave administrador debe tener 12 dígitos.',
     ];
 
     //Constructor
@@ -103,7 +107,6 @@ class usuarioController extends Controller
     // * Login
     public function login(Request $request)
     {
-
         try {
             // Validamos datos
             $request->validate([
@@ -126,7 +129,6 @@ class usuarioController extends Controller
                 'email' => $request->input('email'),
                 'password' => $request->input('password'),
             ];
-
 
             // ? Verificamos
             if (auth()->attempt($credentials)) {
@@ -153,6 +155,16 @@ class usuarioController extends Controller
         }
     }
 
+    // * Cerra sesión
+    public function salir()
+    {
+        // Cerrar la sesión
+        auth()->logout();
+
+        // Volvemos a /
+        return redirect('/');
+    }
+
     // * Registro
     public function registro(Request $request)
     {
@@ -161,6 +173,9 @@ class usuarioController extends Controller
 
             // Validamos
             $request->validate($this->validaciones, $this->respuestas);
+
+            // Comprobamos clave de administrador
+            $this->comprobarAdminKey($request->input('rol_id'), $request->input('admin_key'));
 
             // ? Contraseñas diferentes
             if ($request->input('password') !== $request->input('password2')) {
@@ -190,7 +205,7 @@ class usuarioController extends Controller
 
             // Creamos estudio
             $nuevoEstudio = new Estudios_usuario([
-                'user_id' => $nuevoUsuario->id, // Asumiendo que tienes una relación "user_id" en la tabla de estudios
+                'user_id' => $nuevoUsuario->id,
                 'licenciatura' => $request->input('licenciatura') === 'on',
                 'maestria' => $request->input('maestria') === 'on',
                 'doctorado' => $request->input('doctorado') === 'on',
@@ -217,6 +232,37 @@ class usuarioController extends Controller
 
 
     //SECTION - Privadas ----------------
+
+    // * Comprobar clave admin
+    private  function comprobarAdminKey(string $rol_id, ?string $key)
+    {
+        // Obtenemos rol
+        $rol = Rol_usuario::find($rol_id);
+
+        // ? No existe
+        if (!$rol) {
+            throw new \Exception('No se encontró el rol de usuario.');
+        }
+
+        // ? Rol de administrador
+        if ($rol->is_admin) {
+
+            // ? No existe
+            if (!$key) {
+                throw new \Exception('Para ser admin tienes que poner la clave de administrador');
+            }
+
+            // ? No existe
+            if (!env('KEY_ADMIN')) {
+                throw new \Exception('No se encontró la key del administrador, actualiza .env .');
+            }
+
+            // ? Diferentes
+            if ($key !== env('KEY_ADMIN')) {
+                throw new \Exception('La clave del administrador es incorrecta');
+            }
+        }
+    }
 
     // ! - Error de login
     private function catchErrorLogin(Request $request, $mensaje)

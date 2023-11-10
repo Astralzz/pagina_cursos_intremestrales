@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 // * Index
 Route::get('/', function () {
-    return view('index');
+    return view('sections.section_inicio');
 })->name('index');
 
 // * 404
@@ -39,6 +39,12 @@ Route::group(['prefix' => 'usuario'], function () {
         'acceder',
         [usuarioController::class, 'login']
     )->name('usuario.login');
+
+    //STUB - Login
+    Route::get(
+        'salir',
+        [usuarioController::class, 'salir']
+    )->name('usuario.exit');
 
     //STUB - Registro
     Route::post(

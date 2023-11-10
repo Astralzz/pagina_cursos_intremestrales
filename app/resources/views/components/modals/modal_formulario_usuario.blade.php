@@ -221,12 +221,15 @@
                     <div class="input-group mb-3">
                         {{-- CONTRASEÑA --}}
                         <span class="input-group-text">Contraseña<strong class="text-danger">*</strong></span>
-                        <input required name="password" inlength="8" maxlength="16" type="password"
+                        <input required name="password" minlength="8" maxlength="16" type="password"
                             class="form-control">
                         {{-- CONTRASEÑA REPETIR --}}
                         <span class="input-group-text">Repitela<strong class="text-danger">*</strong></span>
-                        <input required name="password2" inlength="8" maxlength="16" type="password"
+                        <input required name="password2" minlength="8" maxlength="16" type="password"
                             class="form-control">
+                        {{-- CLAVE ADMIN --}}
+                        <span class="input-group-text">Clave admin</span>
+                        <input name="admin_key" minlength="12" maxlength="12" type="password" class="form-control">
                     </div>
                 </form>
             </div>

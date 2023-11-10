@@ -241,3 +241,17 @@
   Respuesta
 
         La suma de los 2 numeros es 14016
+
+## Soluciones
+
+### No funciona o se actualiza el env
+
+Ejecuta en orden:
+
+      composer dump-autoload
+
+      php artisan cache:clear
+
+      php artisan config:clear
+
+      php artisan view:clear
