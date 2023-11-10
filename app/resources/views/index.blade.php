@@ -26,7 +26,7 @@
             // Variable usuario
             $usuario = auth()
                 ->user()
-                ->load('estudios', 'reconocimientos', 'cursos');
+                ->load('estudios', 'cursos');
         @endphp
 
         @include('pages.home')

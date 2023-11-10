@@ -53,11 +53,6 @@ class User extends Model implements Authenticatable
         return $this->hasOne(Estudios_usuario::class, 'user_id');
     }
 
-    public function reconocimientos()
-    {
-        return $this->hasOne(Reconocimientos_usuario::class, 'user_id');
-    }
-
     public function cursos()
     {
         return $this->hasMany(Curso::class, 'user_id');
