@@ -255,3 +255,17 @@ Ejecuta en orden:
       php artisan config:clear
 
       php artisan view:clear
+
+## Tutorial
+
+1:
+
+       composer install
+
+2:
+
+       php artisan migrate
+
+3:
+
+      php artisan insert-data-primary
