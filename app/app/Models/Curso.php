@@ -25,6 +25,7 @@ class Curso extends Model
         'sede',
         'fecha_inicio',
         'fecha_final',
+        'status'
     ];
 
     // Ocultos

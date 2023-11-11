@@ -1,7 +1,7 @@
 {{-- * -  DATOS PHP --}}
 @php
     // * Variables
-    $variables = ['nombre', 'categoria_id', 'sede', 'nombre_instructor', 'tipo'];
+    $variables = ['categoria_id', 'nombre', 'tipo', 'nombre_instructor', 'sede', 'fecha_inicio', 'fecha_final'];
 
     // * Recorremos
     foreach ($variables as $variable) {
@@ -36,7 +36,7 @@
                     {{ isset($curso) ? 'Editar curso' : 'Registrar curso' }}
                 </h1>
                 {{-- ! Boton de X --}}
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             {{-- Cuerpo del modal --}}
@@ -75,21 +75,20 @@
                         {{-- NOMBRE --}}
                         <span class="input-group-text">Titulo<strong class="text-danger">*</strong></span>
                         <input required name="nombre" value="{{ isset($nombre) ? $nombre : '' }}" minlength="5"
-                            maxlength="240" type="text" autocomplete="name" class="form-control" aria-label="nombre">
+                            maxlength="240" type="text" autocomplete="name" class="form-control">
                     </div>
 
                     {{-- * - SEDE  Y INSTRUCTOR --}}
                     <div class="input-group mb-3">
                         {{-- SEDE --}}
                         <span class="input-group-text">SEDE</span>
-                        <input name="sede" value="{{ isset($sede) ? $sede : '' }}" minlength="3" maxlength="240"
-                            type="text" autocomplete="additional-name" class="form-control" aria-label="sede">
+                        <input name="sede" value="{{ isset($sede) ? $sede : '' }}" minlength="3" maxlength="120"
+                            type="text" autocomplete="additional-name" class="form-control">
                         {{-- INSTRUCTOR --}}
                         <span class="input-group-text">INSTRUCTOR<strong class="text-danger">*</strong></span>
                         <input required name="nombre_instructor"
                             value="{{ isset($nombre_instructor) ? $nombre_instructor : '' }}" minlength="3"
-                            maxlength="240" type="text" autocomplete="additional-name" class="form-control"
-                            aria-label="nombre_instructor">
+                            maxlength="120" type="text" autocomplete="additional-name" class="form-control">
                     </div>
 
                     {{-- *  - TIPO Y CREADOR --}}
@@ -122,26 +121,31 @@
                         @endif
                     </div>
 
-                    {{-- * - CATEGORIA --}}
+                    {{-- * - CATEGORIA Y FECHAS --}}
                     <div class="input-group mb-3">
                         {{-- CATEGORIA --}}
-                        @if (!isset($curso))
+                        @if (isset($categorias_cursos))
                             <span class="input-group-text">CATEGORIA<strong class="text-danger">*</strong></span>
-                            {{-- ? Llegaron roles --}}
-                            @if (isset($categorias_cursos))
-                                <select name="categoria_id" required class="form-select form-control">
-                                    {{-- DEFAULD --}}
-                                    <option value="" @if (isset($categoria_id)) hidden @endif selected>
-                                        Selecionar categoria
+                            <select name="categoria_id" required class="form-select form-control">
+                                {{-- DEFAULD --}}
+                                <option value="" @if (isset($categoria_id)) hidden @endif selected>
+                                    Selecionar categoria
+                                </option>
+                                @foreach ($categorias_cursos as $categoria)
+                                    <option value="{{ $categoria->id }}"
+                                        @if (isset($categoria_id) && (int) $categoria_id === (int) $categoria->id) selected @endif>{{ $categoria->nombre }}
                                     </option>
-                                    @foreach ($categorias_cursos as $categoria)
-                                        <option value="{{ $categoria->id }}"
-                                            @if (isset($categoria_id) && (int) $categoria_id === (int) $categoria->id) selected @endif>{{ $categoria->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            @endif
+                                @endforeach
+                            </select>
                         @endif
+                        {{-- FECHA  INICIO --}}
+                        <span class="input-group-text">Inicio<strong class="text-danger">*</strong></span>
+                        <input required name="fecha_inicio" type="date" class="form-control"
+                            value="{{ isset($fecha_inicio) ? $fecha_inicio : '' }}">
+                        {{-- FECHA  FINAL --}}
+                        <span class="input-group-text">Final<strong class="text-danger">*</strong></span>
+                        <input required name="fecha_final" type="date" class="form-control"
+                            value="{{ isset($fecha_final) ? $fecha_final : '' }}">
                     </div>
 
                 </form>
