@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('sede')->nullable();
             $table->date('fecha_inicio');
             $table->date('fecha_final')->nullable();
+            $table->boolean('status')->default(false);
             $table->timestamps();
 
             // Llaves foráneas

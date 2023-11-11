@@ -22,13 +22,6 @@
 
     {{-- ? Existe una sesion --}}
     @if (auth()->check())
-        @php
-            // Variable usuario
-            $usuario = auth()
-                ->user()
-                ->load('estudios', 'cursos', 'rol');
-        @endphp
-
         @include('pages.home')
     @else
         @include('pages.login')

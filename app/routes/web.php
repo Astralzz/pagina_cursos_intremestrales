@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\cursoController;
 use App\Http\Controllers\usuarioController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,13 +27,7 @@ Route::fallback(function () {
 
 
 //SECTION - Usuarios
-Route::group(['prefix' => 'usuario'], function () {
-    // //Vista de l login de los sub admin
-    // Route::get('login', function () {
-    //     //Retornamos la tabla y la variable arrayNoticias
-    //     return view('pages.admin.login');
-    // })->name('vista.login.administradores');
-    //Login sub admin
+Route::group(['prefix' => 'usuarios'], function () {
 
     //STUB - Login
     Route::post(
@@ -40,7 +35,7 @@ Route::group(['prefix' => 'usuario'], function () {
         [usuarioController::class, 'login']
     )->name('usuario.login');
 
-    //STUB - Login
+    //STUB - Salir
     Route::get(
         'salir',
         [usuarioController::class, 'salir']
@@ -52,12 +47,26 @@ Route::group(['prefix' => 'usuario'], function () {
         [usuarioController::class, 'registro']
     )->name('usuario.registro');
 
-    // //Cerra sesión
-    // Route::get(
-    //     'cerrar',
-    //     [
-    //         administradorController::class,
-    //         'cerrar'
-    //     ]
-    // )->name('administrador.salir');
+    //STUB - Editar
+    Route::post(
+        'editar',
+        [usuarioController::class, 'editar']
+    )->name('usuario.editar');
+});
+
+
+//SECTION - Cursos
+Route::group(['prefix' => 'cursos'], function () {
+
+    //STUB - Registro
+    Route::post(
+        'registrar',
+        [cursoController::class, 'registro']
+    )->name('curso.registro');
+
+    //STUB - Editar
+    Route::post(
+        'editar',
+        [cursoController::class, 'editar']
+    )->name('curso.editar');
 });

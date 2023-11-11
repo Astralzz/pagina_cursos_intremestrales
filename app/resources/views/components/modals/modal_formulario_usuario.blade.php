@@ -33,6 +33,9 @@
         'postgrado' => ['nombre' => 'postgrado', 'isCheck' => isset($postgrado) && $postgrado === 'on'],
     ];
 
+    // Accion
+    $Accion_form = isset($usuario) ? route('usuario.editar') : route('usuario.registro');
+
 @endphp
 
 
@@ -46,7 +49,8 @@
             {{-- Encabezado modal --}}
             <div class="modal-header">
                 {{-- Leyenda --}}
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Registrar usuario
+                <h1 class="modal-title text-dark fs-5">
+                    {{ isset($usuario) ? 'Editar perfil' : 'Registrar usuario' }}
                 </h1>
                 {{-- ! Boton de X --}}
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -80,7 +84,7 @@
                 @endif
 
                 {{-- TODO - Formulario --}}
-                <form id="formulario_usuario" method="POST" action="{{ route('usuario.registro') }}">
+                <form id="formulario_usuario" method="POST" action="{{ $Accion_form }}">
                     @csrf
 
                     {{-- * - NOMBRE Y ROL --}}
@@ -92,21 +96,24 @@
                             maxlength="240" type="text" autocomplete="name" class="form-control" aria-label="nombre">
 
                         {{-- ROL --}}
-                        <span class="input-group-text">ROL<strong class="text-danger">*</strong></span>
-                        {{-- ? Llegaron roles --}}
-                        @if (isset($roles_usuario))
-                            <select name="rol_id" required class="form-select form-control">
-                                {{-- DEFAULD --}}
-                                <option value="" @if (isset($rol_id)) hidden @endif selected>
-                                    Selecionar rol
-                                </option>
-                                @foreach ($roles_usuario as $rol_usuario)
-                                    <option value="{{ $rol_usuario->id }}"
-                                        @if (isset($rol_id) && (int) $rol_id === (int) $rol_usuario->id) selected @endif>{{ $rol_usuario->nombre }}
+                        @if (!isset($usuario))
+                            <span class="input-group-text">ROL<strong class="text-danger">*</strong></span>
+                            {{-- ? Llegaron roles --}}
+                            @if (isset($roles_usuario))
+                                <select name="rol_id" required class="form-select form-control">
+                                    {{-- DEFAULD --}}
+                                    <option value="" @if (isset($rol_id)) hidden @endif selected>
+                                        Selecionar rol
                                     </option>
-                                @endforeach
-                            </select>
+                                    @foreach ($roles_usuario as $rol_usuario)
+                                        <option value="{{ $rol_usuario->id }}"
+                                            @if (isset($rol_id) && (int) $rol_id === (int) $rol_usuario->id) selected @endif>{{ $rol_usuario->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endif
                         @endif
+
                     </div>
 
                     {{-- * -RFC  Y TELEFONO --}}
@@ -124,9 +131,11 @@
                     {{-- * -EMAIL Y  CLAVE PROPUESTA --}}
                     <div class="input-group mb-3">
                         {{-- EMAIL --}}
-                        <span class="input-group-text">EMAIL<strong class="text-danger">*</strong></span>
-                        <input required name="email" value="{{ isset($email) ? $email : '' }}" minlength="5"
-                            maxlength="120" type="email" autocomplete="email" class="form-control">
+                        @if (!isset($usuario))
+                            <span class="input-group-text">EMAIL<strong class="text-danger">*</strong></span>
+                            <input required name="email" value="{{ isset($email) ? $email : '' }}" minlength="5"
+                                maxlength="120" type="email" autocomplete="email" class="form-control">
+                        @endif
                         {{-- CLAVE PROPUESTA --}}
                         <span class="input-group-text">CLAVE PROPUESTA</span>
                         <input name="clave_propuesta" value="{{ isset($clave_propuesta) ? $clave_propuesta : '' }}"
@@ -217,20 +226,26 @@
                             rows="3">@php echo isset($domicilio) ? $domicilio : ''; @endphp</textarea>
                     </div>
 
-                    {{-- * - CONTRASEÑA --}}
+                    {{-- * - CONTRASEÑAS --}}
+
                     <div class="input-group mb-3">
                         {{-- CONTRASEÑA --}}
                         <span class="input-group-text">Contraseña<strong class="text-danger">*</strong></span>
                         <input required name="password" minlength="8" maxlength="16" type="password"
                             class="form-control">
-                        {{-- CONTRASEÑA REPETIR --}}
-                        <span class="input-group-text">Repitela<strong class="text-danger">*</strong></span>
-                        <input required name="password2" minlength="8" maxlength="16" type="password"
-                            class="form-control">
-                        {{-- CLAVE ADMIN --}}
-                        <span class="input-group-text">Clave admin</span>
-                        <input name="admin_key" minlength="12" maxlength="12" type="password" class="form-control">
+                        @if (!isset($usuario))
+                            {{-- CONTRASEÑA REPETIR --}}
+                            <span class="input-group-text">Repitela<strong class="text-danger">*</strong></span>
+                            <input required name="password2" minlength="8" maxlength="16" type="password"
+                                class="form-control">
+                            {{-- CLAVE ADMIN --}}
+                            <span class="input-group-text">Clave admin</span>
+                            <input name="admin_key" minlength="12" maxlength="12" type="password"
+                                class="form-control">
+                        @endif
                     </div>
+
+
                 </form>
             </div>
 
@@ -246,7 +261,7 @@
 </div>
 
 {{-- * Script para limpiar datos --}}
-@if (isset($usuario))
+@if (false)
     <script>
         // Limpiamos datos
         $('#modal_registro_usuario').on('hidden.bs.modal', function() {

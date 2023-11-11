@@ -2,19 +2,20 @@
 
 
 {{-- ? Existe un usuario? --}}
-@if (isset($usuario))
+@auth
+
     @php
+
+        // Variable usuario
+        $usuario = auth()
+            ->user()
+            ->load('estudios', 'cursos', 'rol');
+
         $secciones = [
             // Aceptar cursos
             [
                 'permiso' => $usuario->rol->is_admin,
                 'titulo' => 'Aceptar cursos',
-                'ruta' => route('index'),
-                'icono' => 'bi bi-journals',
-            ],
-            [
-                'permiso' => true,
-                'titulo' => 'Crear nuevo curso',
                 'ruta' => route('index'),
                 'icono' => 'bi bi-journals',
             ],
@@ -32,7 +33,9 @@
             ],
         ];
     @endphp
-@endif
+
+@endauth
+
 
 {{-- * Vista -------------------------------- --}}
 <div class="container-fluid vh-100">
@@ -51,7 +54,7 @@
                     {{-- Imagen --}}
                     <img height="120px" alt="img" src="{{ asset('imgs/logoApp.png') }}" alt="img">
 
-                    <h4 class="fs-4 text-white">{{ $usuario->nombre ?? 'N/A' }}</h4>
+                    <h4 class="fs-4 text-white">{{ isset($usuario) ? $usuario->nombre : 'N/A' }}</h4>
                 </div>
 
                 <br>
@@ -74,6 +77,21 @@
                             </a>
                         </li>
 
+
+                        {{-- * Crear curso --}}
+                        <li>
+                            <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
+                                data-bs-target="#modal_registro_curso">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Crear curso
+                                </span>
+                            </a>
+                        </li>
+
+                        {{-- Modal del formulario usuario --}}
+                        @include('components.modals.modal_formulario_curso')
+
                         {{-- * Recorremos --}}
                         @foreach ($secciones as $seccion)
                             {{-- ? Tiene permiso --}}
@@ -91,15 +109,28 @@
                             @endif
                         @endforeach
 
-                        {{-- * Cerrar sesion --}}
+                        {{-- * Modificar peril --}}
                         <li>
-                            <a href="{{ route('usuario.exit') }}" class="nav-link px-0 align-middle text-white">
+                            <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
+                                data-bs-target="#modal_registro_usuario">
                                 <i class="bi bi-box-arrow-right"></i>
-                                <span class="ms-1 d-none d-sm-inline">Cerrar sesión</span>
+                                <span class="ms-1 d-none d-sm-inline">
+                                    Modificar perfil</span>
                             </a>
                         </li>
 
+                        {{-- Modal del formulario usuario --}}
+                        @include('components.modals.modal_formulario_usuario')
+
                     @endif
+
+                    {{-- * Cerrar sesion --}}
+                    <li>
+                        <a href="{{ route('usuario.exit') }}" class="nav-link px-0 align-middle text-white">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span class="ms-1 d-none d-sm-inline">Cerrar sesión</span>
+                        </a>
+                    </li>
 
                 </ul>
 

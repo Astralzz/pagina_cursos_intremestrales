@@ -133,10 +133,7 @@ class usuarioController extends Controller
             // ? Verificamos
             if (auth()->attempt($credentials)) {
                 // Autenticación exitosa
-                $usuario = auth()->user();
-
-                // Creamos sesión
-                $request->session()->put('usuario', $usuario);
+                auth()->user();
 
                 // * Exito
                 return redirect()->back();
@@ -229,7 +226,96 @@ class usuarioController extends Controller
         }
     }
 
+    // * Editar
+    public function editar(Request $request)
+    {
+        try {
+            // Obtenemos el usuario existente
+            $usuario = User::find(auth()->user()->id);
 
+            // ? No existe
+            if (!$usuario) {
+                return $this->catchErrorRegistro($request, 'No se encontró el usuario.');
+            }
+
+            // Obtenemos el estudio asociado al usuario
+            $estudio = Estudios_usuario::where('user_id', $usuario->id)->first();
+
+            // ? No existe
+            if (!$estudio) {
+                return $this->catchErrorRegistro($request, 'No se encontró el estudio.');
+            }
+
+            // Validar datos
+            $request->validate(
+                array_diff_key(
+                    $this->validaciones,
+                    [
+                        'rol_id' => '',
+                        'email' => '',
+                        'password2' => '',
+                        'admin_key' => '',
+                    ]
+                ),
+                array_diff_key(
+                    $this->respuestas,
+                    [
+                        'rol_id.required' => '',
+                        'rol_id.numeric' => '',
+                        'email.required' => '',
+                        'email.unique' => '',
+                        'email.email' => '',
+                        'email.string' => '',
+                        'email.min' => '',
+                        'email.max' => '',
+                        'password2.required' => '',
+                        'password2.string' => '',
+                        'password2.min' => '',
+                        'password2.max' => '',
+                        'admin_key.numeric' => '',
+                        'admin_key.digits' => '',
+                    ]
+                )
+            );
+
+            // Validamos la contraseña
+            if (!Hash::check($request->input('password'), $usuario->password)) {
+                return $this->catchErrorRegistro($request, 'La contraseña es incorrecta');
+            }
+
+            // Actualizar datos del usuario
+            $usuario->update([
+                'nombre' => $request->input('nombre'),
+                'rfc' => $request->input('rfc'),
+                'telefono' => $request->input('telefono'),
+                'clave_propuesta' => $request->input('clave_propuesta'),
+                'tipo_puesto' => $request->input('tipo_puesto'),
+                'nivel_puesto' => $request->input('nivel_puesto'),
+                'institucion' => $request->input('institucion'),
+                'departamento' => $request->input('departamento'),
+                'nombre_jefe' => $request->input('nombre_jefe'),
+                'horario' => $request->input('horario'),
+                'domicilio' => $request->input('domicilio'),
+            ]);
+
+            // Actualizar datos del estudio
+            $estudio->update([
+                'licenciatura' => $request->input('licenciatura') === 'on',
+                'maestria' => $request->input('maestria') === 'on',
+                'doctorado' => $request->input('doctorado') === 'on',
+                'postgrado' => $request->input('postgrado') === 'on',
+            ]);
+
+            // Éxito
+            return redirect()->back()->with('exito_formulario', 'Los datos se actualizaron correctamente.');
+        } catch (ValidationException $e) {
+            return $this->catchErrorRegistro($request, 'Error de validación, ' . $e->getMessage());
+        } catch (QueryException $e) {
+            return $this->catchErrorRegistro($request, 'Error de query, ' . $e->getMessage());
+        } catch (\Exception $e) {
+            return $this->catchErrorRegistro($request, 'Error desconocido, ' . $e->getMessage());
+        }
+    }
 
     //SECTION - Privadas ----------------
 
