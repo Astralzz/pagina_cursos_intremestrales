@@ -17,8 +17,6 @@ class Curso extends Model
 
     // Mostrar
     protected $fillable = [
-        'user_id',
-        'categoria_id',
         'nombre',
         'informacion',
         'tipo',

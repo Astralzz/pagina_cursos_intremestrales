@@ -3,21 +3,10 @@
 
       {{-- Comprobamos --}}
       @if (isset($usuario))
-
-          {{-- ! Error en una accion --}}
-          @if (session('error_accion'))
-              <div class="alert alert-danger">
-                  {{ session('error_accion') }}
-              </div>
-          @endif
-
-          @php
-              //Filas de la tabla
-              $filas = isset($filas) ? $filas : 10;
-          @endphp
-
           {{-- Inicio --}}
           @yield('section_inicio')
+          @yield('section_lista_cursos')
+          @yield('section_lista_cursos_publicos')
       @else
           <br />
           <div class="alert alert-danger">

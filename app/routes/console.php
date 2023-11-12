@@ -17,12 +17,12 @@ use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+})->purpose('Mostrar una cita inspiradora');
 
 
 //SECTION -  Comandos artisan extras
 
-//* -> php artisan insert-data-primary
+// * -> php artisan insert-data-primary
 
 // Insertar datos primarios
 Artisan::command('insert-data-primary', function () {
@@ -31,10 +31,44 @@ Artisan::command('insert-data-primary', function () {
         $consoleController = new consoleController();
         $consoleController->generarDatosPrimariosGlobales();
 
-        $this->info('Éxito, los datos se insertaron correctamente.');
+        $this->info('Éxito, los datos se generaron correctamente.');
 
         //! - Error
     } catch (Exception $e) {
         $this->error('Ocurrió un error: ' . $e->getMessage());
     }
 })->describe('Inserta los datos de las tablas padre.');
+
+// * -> php artisan insert-user-random
+
+// Insertar 10 usuarios aleatorios
+Artisan::command('insert-user-random', function () {
+    try {
+
+        $consoleController = new consoleController();
+        $consoleController->generarUsuariosAleatorios();
+
+        $this->info('Éxito, los usuarios se generaron correctamente.');
+
+        //! - Error
+    } catch (Exception $e) {
+        $this->error('Ocurrió un error: ' . $e->getMessage());
+    }
+})->describe('Inserta 10 usuarios aleatorios a la tabla user.');
+
+// * -> php artisan insert-cursos-random
+
+// Insertar 50 cursos aleatorios
+Artisan::command('insert-cursos-random', function () {
+    try {
+
+        $consoleController = new consoleController();
+        $consoleController->generarCursosAleatorios();
+
+        $this->info('Éxito, los cursos se generaron correctamente.');
+
+        //! - Error
+    } catch (Exception $e) {
+        $this->error('Ocurrió un error: ' . $e->getMessage());
+    }
+})->describe('Inserta 50 usuarios aleatorios a la tabla user.');

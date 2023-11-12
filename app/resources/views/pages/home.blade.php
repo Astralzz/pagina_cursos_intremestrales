@@ -22,13 +22,13 @@
             [
                 'permiso' => true,
                 'titulo' => 'Ver mis cursos',
-                'ruta' => route('index'),
+                'ruta' => route('curso.lista.id', ['id' => $usuario->id]),
                 'icono' => 'bi bi-journals',
             ],
             [
                 'permiso' => true,
-                'titulo' => 'Ver los cursos disponibles',
-                'ruta' => route('index'),
+                'titulo' => 'Cursos publicos',
+                'ruta' => route('curso.lista.publica'),
                 'icono' => 'bi bi-journals',
             ],
         ];

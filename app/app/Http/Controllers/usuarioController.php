@@ -180,7 +180,7 @@ class usuarioController extends Controller
             }
 
             // Creamos usuario
-            $nuevoUsuario = new User([
+            $nuevoUsuario =  $this->usuario->create([
                 'nombre' => $request->input('nombre'),
                 'rol_id' => $request->input('rol_id'),
                 'rfc' => $request->input('rfc'),
@@ -197,11 +197,8 @@ class usuarioController extends Controller
                 'password' => Hash::make($request->input('password')),
             ]);
 
-            // Guardamos
-            $nuevoUsuario->save();
-
             // Creamos estudio
-            $nuevoEstudio = new Estudios_usuario([
+            $nuevoEstudio =  $this->estudio->create([
                 'user_id' => $nuevoUsuario->id,
                 'licenciatura' => $request->input('licenciatura') === 'on',
                 'maestria' => $request->input('maestria') === 'on',
@@ -231,7 +228,7 @@ class usuarioController extends Controller
     {
         try {
             // Obtenemos el usuario existente
-            $usuario = User::find(auth()->user()->id);
+            $usuario = $this->usuario->find(auth()->user()->id);
 
             // ? No existe
             if (!$usuario) {
@@ -239,7 +236,7 @@ class usuarioController extends Controller
             }
 
             // Obtenemos el estudio asociado al usuario
-            $estudio = Estudios_usuario::where('user_id', $usuario->id)->first();
+            $estudio = $this->estudio->where('user_id', $usuario->id)->first();
 
             // ? No existe
             if (!$estudio) {

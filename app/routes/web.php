@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 // * Index
 Route::get('/', function () {
-    return view('sections.section_inicio');
+    return view('sections.inicio');
 })->name('index');
 
 // * 404
@@ -69,4 +69,27 @@ Route::group(['prefix' => 'cursos'], function () {
         'editar',
         [cursoController::class, 'editar']
     )->name('curso.editar');
+
+    //STUB - Listas
+    Route::group(['prefix' => 'lista'], function () {
+
+        // Completa
+        Route::get('{id}', [cursoController::class, 'listaPorId'])->name('curso.lista.id');
+
+        // Por status
+        Route::get('status/{id}/{status}', [cursoController::class, 'listaPorStatus'])->name('curso.lista.status');
+
+        // Pos titulo
+        Route::post('titulo/{id}', [cursoController::class, 'listaPorTitulo'])->name('curso.lista.titulo');
+
+        // Publica
+        Route::group(['prefix' => 'publica'], function () {
+
+            // Completa
+            Route::get('total', [cursoController::class, 'listaPublica'])->name('curso.lista.publica');
+
+            // Pos titulo
+            Route::post('titulo', [cursoController::class, 'listaPublicaPorTitulo'])->name('curso.lista.publica.titulo');
+        });
+    });
 });

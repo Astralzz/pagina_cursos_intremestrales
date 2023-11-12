@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Curso;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -63,7 +64,6 @@ class cursoController extends Controller
     // * Registro
     public function registro(Request $request)
     {
-
         try {
 
             // Validamos
@@ -77,7 +77,7 @@ class cursoController extends Controller
                 return $this->catchErrorRegistro($request, 'El usuario autenticado no existe.');
             }
 
-            // ? Son iguales
+            // ? Son diferentes
             if ($usuarioAutenticado->id != $request->input('user_id')) {
                 return $this->catchErrorRegistro($request, 'Usuario invalido, No tienes permiso para realizar esta acción.');
             }
@@ -92,7 +92,7 @@ class cursoController extends Controller
             }
 
             // Creamos curso
-            $nuevoCurso = new Curso([
+            $this->curso->create([
                 'user_id' => $request->input('user_id'),
                 'categoria_id' => $request->input('categoria_id'),
                 'nombre' => $request->input('nombre'),
@@ -103,9 +103,6 @@ class cursoController extends Controller
                 'fecha_inicio' => $request->input('fecha_inicio'),
                 'fecha_final' => $request->input('fecha_final'),
             ]);
-
-            // Guardamos
-            $nuevoCurso->save();
 
             // * Éxito
             return redirect()->back()
@@ -135,6 +132,181 @@ class cursoController extends Controller
             return $this->catchErrorRegistro($request, 'Error de query, ' . $e->getMessage());
         } catch (\Exception $e) {
             return $this->catchErrorRegistro($request, 'Error desconocido, ' . $e->getMessage());
+        }
+    }
+
+    // * Lista por id
+    public function listaPorId($id)
+    {
+        try {
+
+            // ? Son diferentes
+            if (auth()->id() != $id) {
+                throw new \Exception('No tienes autorización para ver esta lista');
+            }
+
+            // Obtenemos
+            $lista = $this->curso->where('user_id', $id)->get();
+
+            // Devolver la vista con la lista de cursos del usuario
+            return view('sections.lista_cursos', [
+                'listaCursos' => $lista,
+                'titulo' => 'Todos mis cursos',
+            ]);
+
+            // ! - error
+        } catch (\Exception $e) {
+            return view('sections.lista_cursos')
+                ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
+        }
+    }
+
+    // * Lista por id
+    public function listaPublica()
+    {
+        try {
+
+            // Obtenemos aceptados
+            $lista = $this->curso->where('status', 'ACEPTADO')
+                ->select([
+                    'nombre',
+                    'informacion',
+                    'tipo',
+                    'nombre_instructor',
+                    'sede',
+                    'fecha_inicio',
+                    'fecha_final',
+                ])
+                ->get();
+
+            // Devolver la vista con la lista de cursos del usuario
+            return view('sections.lista_cursos_publicos', [
+                'listaCursos' => $lista,
+                'titulo' => 'Todos mis cursos',
+            ]);
+
+            // ! - error
+        } catch (\Exception $e) {
+            return view('sections.lista_cursos_publicos')
+                ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
+        }
+    }
+
+    // * Lista por status
+    public function listaPorStatus($id, $status)
+    {
+        try {
+
+            // ? Son diferentes
+            if (auth()->id() != $id) {
+                throw new \Exception('No tienes autorización para ver esta lista');
+            }
+
+            // Obtenemos
+            $lista = $this->curso->where('user_id', $id)
+                ->where('status', $status)
+                ->get();
+
+            // Titulo
+            $titulo = 'Cursos ' . ($status != 'ESPERA' ? strtolower($status) . 's' : 'en espera');
+
+            // Devolver la vista con la lista de cursos del usuario
+            return view('sections.lista_cursos', [
+                'listaCursos' => $lista,
+                'isFiltrado' => '1',
+                'titulo' => $titulo,
+            ]);
+
+            // ! - error
+        } catch (\Exception $e) {
+            return view('sections.lista_cursos')
+                ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
+        }
+    }
+
+    // * Lista por status
+    public function listaPorTitulo($id, Request $request)
+    {
+        try {
+
+            // Validamos
+            $request->validate(
+                [
+                    'titulo_buscar' => 'required|string|min:2|max:240'
+                ],
+                [
+                    'titulo_buscar.required' => 'El campo titulo es requerido.',
+                    'titulo_buscar.string' => 'El campo titulo debe ser una cadena de texto.',
+                    'titulo_buscar.min' => 'El campo titulo debe tener al menos 2 caracteres.',
+                    'titulo_buscar.max' => 'El campo titulo debe tener como máximo 240 caracteres.',
+                ]
+            );
+
+            // ? Son diferentes
+            if (auth()->id() != $id) {
+                throw new \Exception('No tienes autorización para ver esta lista');
+            }
+
+            // Obtenemos
+            $lista = $this->curso->where('user_id', $id)
+                ->where('nombre', 'like', '%' . $request->input('titulo_buscar') . '%')
+                ->get();
+
+            // Devolver la vista con la lista de cursos del usuario
+            return view('sections.lista_cursos', [
+                'listaCursos' => $lista,
+                'titulo' => 'Todos mis cursos',
+                'titulo_buscar' => $request->input('titulo_buscar'),
+            ]);
+
+            // ! - error
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput($request->only(
+                    'titulo_buscar',
+                ))
+                ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
+        }
+    }
+
+    // * Lista por id
+    public function listaPublicaPorTitulo(Request $request)
+    {
+
+        try {
+
+            // Validamos
+            $request->validate(
+                [
+                    'titulo_buscar' => 'required|string|min:2|max:240'
+                ],
+                [
+                    'titulo_buscar.required' => 'El campo titulo es requerido.',
+                    'titulo_buscar.string' => 'El campo titulo debe ser una cadena de texto.',
+                    'titulo_buscar.min' => 'El campo titulo debe tener al menos 2 caracteres.',
+                    'titulo_buscar.max' => 'El campo titulo debe tener como máximo 240 caracteres.',
+                ]
+            );
+
+            // Obtenemos
+            $lista = $this->curso->where('status', 'ACEPTADO')
+                ->where('nombre', 'like', '%' . $request->input('titulo_buscar') . '%')
+                ->get();
+
+            // Devolver la vista con la lista de cursos del usuario
+            return view('sections.lista_cursos_publicos', [
+                'listaCursos' => $lista,
+                'titulo' => 'Todos mis cursos',
+                'titulo_buscar' => $request->input('titulo_buscar'),
+            ]);
+
+            // ! - error
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput($request->only(
+                    'titulo_buscar',
+                ))
+                ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
         }
     }
 
