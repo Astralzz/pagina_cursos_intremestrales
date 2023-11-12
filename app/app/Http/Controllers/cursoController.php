@@ -18,6 +18,7 @@ class cursoController extends Controller
         'user_id' => 'required|numeric',
         'categoria_id' => 'required|numeric',
         'nombre' => 'required|unique:cursos,nombre|string|min:5|max:240',
+        'informacion' => 'nullable|string|min:5',
         'tipo' => 'nullable|in:PRESENCIAL,VIRTUAL',
         'nombre_instructor' => 'required|string|min:3|max:120',
         'sede' => 'nullable|string|min:3|max:120',
@@ -36,6 +37,8 @@ class cursoController extends Controller
         'nombre.string' => 'El campo nombre debe ser una cadena de texto.',
         'nombre.min' => 'El campo nombre debe tener al menos 5 caracteres.',
         'nombre.max' => 'El campo nombre debe tener como máximo 240 caracteres.',
+        'informacion.string' => 'El campo informacion debe ser una cadena de texto.',
+        'informacion.min' => 'El campo informacion debe tener al menos 5 caracteres.',
         'tipo.in' => 'El campo tipo debe ser "PRESENCIAL" o "VIRTUAL".',
         'nombre_instructor.required' => 'El campo instructor es requerido.',
         'nombre_instructor.string' => 'El campo instructor debe ser una cadena de texto.',
@@ -93,6 +96,7 @@ class cursoController extends Controller
                 'user_id' => $request->input('user_id'),
                 'categoria_id' => $request->input('categoria_id'),
                 'nombre' => $request->input('nombre'),
+                'informacion' => $request->input('informacion'),
                 'tipo' => $request->input('tipo'),
                 'nombre_instructor' => $request->input('nombre_instructor'),
                 'sede' => $request->input('sede'),
@@ -143,6 +147,7 @@ class cursoController extends Controller
         return redirect()->back()
             ->withInput($request->only(
                 'categoria_id',
+                'informacion',
                 'nombre',
                 'tipo',
                 'nombre_instructor',

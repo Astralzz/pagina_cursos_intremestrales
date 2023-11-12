@@ -17,12 +17,13 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('categoria_id');
             $table->string('nombre')->unique();
+            $table->text('informacion')->nullable();
             $table->enum('tipo', ['PRESENCIAL', 'VIRTUAL'])->default('PRESENCIAL');
             $table->string('nombre_instructor');
             $table->string('sede')->nullable();
             $table->date('fecha_inicio');
             $table->date('fecha_final')->nullable();
-            $table->boolean('status')->default(false);
+            $table->enum('status', ['ESPERA', 'ACEPTADO', 'RECHAZADO'])->default('ESPERA');
             $table->timestamps();
 
             // Llaves foráneas

@@ -1,7 +1,7 @@
 {{-- * -  DATOS PHP --}}
 @php
     // * Variables
-    $variables = ['categoria_id', 'nombre', 'tipo', 'nombre_instructor', 'sede', 'fecha_inicio', 'fecha_final'];
+    $variables = ['categoria_id', 'nombre', 'informacion', 'tipo', 'nombre_instructor', 'sede', 'fecha_inicio', 'fecha_final'];
 
     // * Recorremos
     foreach ($variables as $variable) {
@@ -146,6 +146,12 @@
                         <span class="input-group-text">Final<strong class="text-danger">*</strong></span>
                         <input required name="fecha_final" type="date" class="form-control"
                             value="{{ isset($fecha_final) ? $fecha_final : '' }}">
+                    </div>
+
+                    {{-- * - DOMICILIO --}}
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">DOMICILIO</span>
+                        <textarea name="informacion" minlength="5" autocomplete="home" class="form-control" rows="3">@php echo isset($informacion) ? $informacion : ''; @endphp</textarea>
                     </div>
 
                 </form>

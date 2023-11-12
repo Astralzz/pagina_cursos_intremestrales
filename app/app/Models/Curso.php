@@ -20,6 +20,7 @@ class Curso extends Model
         'user_id',
         'categoria_id',
         'nombre',
+        'informacion',
         'tipo',
         'nombre_instructor',
         'sede',
