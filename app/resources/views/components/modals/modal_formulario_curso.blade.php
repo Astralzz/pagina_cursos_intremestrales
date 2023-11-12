@@ -6,8 +6,8 @@
     // * Recorremos
     foreach ($variables as $variable) {
         // ? Existe usaurio
-        if (isset($curso)) {
-            ${$variable} = $curso->$variable ?? null;
+        if (session('infCursoEditar')) {
+            ${$variable} = session('infCursoEditar')->$variable ?? null;
         } else {
             ${$variable} = old($variable) ?? null;
         }
@@ -17,7 +17,7 @@
     $categorias_cursos = app('App\Http\Controllers\categoriaCursoController')->lista();
 
     // Accion
-    $Accion_form = isset($curso) ? route('curso.editar') : route('curso.registro');
+    $Accion_form = session('infCursoEditar') ? route('curso.editar', ['id' => session('infCursoEditar')->id]) : route('curso.registro');
 
 @endphp
 
@@ -33,7 +33,7 @@
             <div class="modal-header">
                 {{-- Leyenda --}}
                 <h1 class="modal-title text-dark fs-5">
-                    {{ isset($curso) ? 'Editar curso' : 'Registrar curso' }}
+                    {{ session('infCursoEditar') ? 'Editar curso' : 'Registrar curso' }}
                 </h1>
                 {{-- ! Boton de X --}}
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -57,7 +57,7 @@
                 @endif
 
                 {{-- ? Abrir modal automaticamente --}}
-                @if (session('error_formulario_curso') || session('exito_formulario_curso'))
+                @if (session('error_formulario_curso') || session('exito_formulario_curso') || session('infCursoEditar'))
                     <script>
                         $(document).ready(function() {
                             // Abre el modal automáticamente cuando el documento esté listo
@@ -162,7 +162,7 @@
                 {{-- Cancelar --}}
                 <button class="btn btn-error" data-bs-dismiss="modal">Cancelar</button>
                 {{-- Aceptar --}}
-                <button class="btn btn-error" id="boton_aceptar" form="formulario_curso">Acceptar</button>
+                <button class="btn btn-error" form="formulario_curso">Acceptar</button>
             </div>
         </div>
     </div>

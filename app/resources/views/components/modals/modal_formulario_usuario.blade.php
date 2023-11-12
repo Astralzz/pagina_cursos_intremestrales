@@ -254,7 +254,7 @@
                 {{-- Cancelar --}}
                 <button class="btn btn-error" data-bs-dismiss="modal">Cancelar</button>
                 {{-- Aceptar --}}
-                <button class="btn btn-error" id="boton_aceptar" form="formulario_usuario">Acceptar</button>
+                <button class="btn btn-error" form="formulario_usuario">Acceptar</button>
             </div>
         </div>
     </div>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Curso;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -119,19 +118,123 @@ class cursoController extends Controller
     }
 
     // * Editar
-    public function editar(Request $request)
+    public function editar(Request $request, $id)
     {
         try {
 
+            // Reglas sin nombre único
+            $reglasValidacion = $this->validaciones;
+            $reglasValidacion['nombre'] = 'required|string|min:5|max:240';
+            $respuestasValidacion = $this->respuestas;
+            unset($respuestasValidacion['nombre.unique']);
+
+            // Validamos
+            $request->validate($reglasValidacion, $respuestasValidacion);
+
+            // Obtenemos el usuario autenticado
+            $usuarioAutenticado = auth()->user();
+
+            // ? No existe
+            if (!$usuarioAutenticado) {
+                return $this->catchErrorRegistro($request, 'El usuario autenticado no existe.');
+            }
+
+            // ? Son diferentes
+            if ($usuarioAutenticado->id != $request->input('user_id')) {
+                return $this->catchErrorRegistro($request, 'Usuario invalido, No tienes permiso para realizar esta acción.');
+            }
+
+            // Fechas
+            $fechaInicio = $request->input('fecha_inicio');
+            $fechaFinal = $request->input('fecha_final');
+
+            // ? Fechas final inválida
+            if ($fechaInicio && $fechaFinal && strtotime($fechaInicio) > strtotime($fechaFinal)) {
+                return $this->catchErrorRegistro($request, 'La fecha final debe ser igual o posterior a la fecha de inicio.');
+            }
+
+            // Buscamos
+            $curso = $this->curso->findOrFail($id);
+
+            // Actualizamos
+            $curso->update([
+                'categoria_id' => $request->input('categoria_id'),
+                'nombre' => $request->input('nombre'),
+                'informacion' => $request->input('informacion'),
+                'tipo' => $request->input('tipo'),
+                'nombre_instructor' => $request->input('nombre_instructor'),
+                'sede' => $request->input('sede'),
+                'fecha_inicio' => $request->input('fecha_inicio'),
+                'fecha_final' => $request->input('fecha_final'),
+            ]);
+
 
             // Éxito
-            return redirect()->back()->with('exito_formulario_curso', 'Los datos se actualizaron correctamente.');
+            return redirect()->back()->with('exito_action_tabla', 'Los datos se actualizaron correctamente.');
         } catch (ValidationException $e) {
             return $this->catchErrorRegistro($request, 'Error de validación, ' . $e->getMessage());
         } catch (QueryException $e) {
             return $this->catchErrorRegistro($request, 'Error de query, ' . $e->getMessage());
         } catch (\Exception $e) {
             return $this->catchErrorRegistro($request, 'Error desconocido, ' . $e->getMessage());
+        }
+    }
+
+    // * Ver curso por id
+    public function infCursoPorId($id)
+    {
+        try {
+
+            // Buscamos
+            $curso = $this->curso->findOrFail($id);
+
+            // Devolver la vista con el curso
+            return redirect()->back()->with([
+                'infCurso' => $curso,
+                'infCursoTitulo' => 'Detalle del curso ' . $curso->nombre,
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error_action_tabla', 'Error al ver curso, ' . $e->getMessage());
+        }
+    }
+
+    // * Pre editar curso por id
+    public function preEditarCursoPorId($id)
+    {
+        try {
+
+            // Buscamos
+            $curso = $this->curso->findOrFail($id);
+
+            // Devolver la vista con el curso
+            return redirect()->back()->with([
+                'infCursoEditar' => $curso,
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error_action_tabla', 'Error al editar curso, ' . $e->getMessage());
+        }
+    }
+
+    // * Eliminar por id
+    public function eliminarCursoPorId($id_user, $id_curso)
+    {
+        try {
+
+            // ? Son diferentes
+            if (auth()->id() != $id_user) {
+                throw new \Exception('No tienes autorización para eliminar este curso');
+            }
+
+            // Buscamos
+            $curso = $this->curso->findOrFail($id_curso);
+
+            // Eliminamos
+            $curso->delete();
+
+            // Devolver exito
+            return redirect()->back()->with('exito_action_tabla', 'Exito, Se elimino el curso correctamente');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_action_tabla', 'Error al eliminar curso, ' . $e->getMessage());
         }
     }
 
@@ -161,14 +264,20 @@ class cursoController extends Controller
         }
     }
 
-    // * Lista por id
+    // * Lista publica
     public function listaPublica()
     {
         try {
 
             // Obtenemos aceptados
-            $lista = $this->curso->where('status', 'ACEPTADO')
+            $lista = $this->curso
+                ->with([
+                    'usuario:id,nombre',
+                    'categoria:id,nombre'
+                ])
+                ->where('status', 'ACEPTADO')
                 ->select([
+                    'id',
                     'nombre',
                     'informacion',
                     'tipo',
@@ -176,6 +285,8 @@ class cursoController extends Controller
                     'sede',
                     'fecha_inicio',
                     'fecha_final',
+                    'user_id',
+                    'categoria_id'
                 ])
                 ->get();
 
@@ -224,7 +335,7 @@ class cursoController extends Controller
         }
     }
 
-    // * Lista por status
+    // * Lista por titulo
     public function listaPorTitulo($id, Request $request)
     {
         try {
@@ -269,10 +380,9 @@ class cursoController extends Controller
         }
     }
 
-    // * Lista por id
+    // * Lista publica por titulo
     public function listaPublicaPorTitulo(Request $request)
     {
-
         try {
 
             // Validamos
@@ -300,7 +410,7 @@ class cursoController extends Controller
                 'titulo_buscar' => $request->input('titulo_buscar'),
             ]);
 
-            // ! - error
+            // ! - Error
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput($request->only(

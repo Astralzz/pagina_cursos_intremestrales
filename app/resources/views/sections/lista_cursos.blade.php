@@ -43,11 +43,14 @@
         $listaVariables = ['nombre', 'informacion', 'status', 'tipo', 'sede', 'nombre_instructor', 'fecha_inicio', 'fecha_final'];
 
         // ? Filtrado
-        if(isset($isFiltrado)){
+        if (isset($isFiltrado)) {
             // Eliminamos
             $listaColumnas = array_diff($listaColumnas, ['Estado']);
             $listaVariables = array_diff($listaVariables, ['status']);
         }
+
+        // Acciones
+        $listaAcciones = ['ver', 'editar', 'eliminar'];
 
     @endphp
 

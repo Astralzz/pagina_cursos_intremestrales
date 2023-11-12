@@ -42,6 +42,6 @@ class Curso extends Model
 
     public function categoria()
     {
-        return $this->belongsTo(CategoriaCurso::class, 'categoria_id');
+        return $this->belongsTo(Categoria_curso::class, 'categoria_id');
     }
 }

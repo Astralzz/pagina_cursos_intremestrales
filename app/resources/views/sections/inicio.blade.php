@@ -79,10 +79,24 @@
             ],
         ];
 
-        // 'licenciatura' => 'nullable|in:on,off',
-        // 'maestria' => 'nullable|in:on,off',
-        // 'doctorado' => 'nullable|in:on,off',
-        // 'postgrado' => 'nullable|in:on,off',
+        $estudios = [
+            [
+                'status' => $usuario->estudios->licenciatura == 1,
+                'titulo' => 'Licenciatura',
+            ],
+            [
+                'status' => $usuario->estudios->maestria == 1,
+                'titulo' => 'Maestria',
+            ],
+            [
+                'status' => $usuario->estudios->doctorado == 1,
+                'titulo' => 'Doctorado',
+            ],
+            [
+                'status' => $usuario->estudios->postgrado == 1,
+                'titulo' => 'Postgrado',
+            ],
+        ];
 
     @endphp
 
@@ -107,7 +121,7 @@
                             </div>
                         </div>
 
-                        {{-- *  Parte de abajo izquierda (Ayudas) ------------------------- --}}
+                        {{-- *  Parte de enmedio izquierda (Ayudas) ------------------------- --}}
                         <div class="card mb-4 mb-lg-0">
                             <div class="card-body p-0">
                                 <br>
@@ -139,6 +153,28 @@
                                 </ul>
                             </div>
                         </div>
+
+                        <br>
+
+                        {{-- *  Parte de abajo izquierda (estudios) ------------------------- --}}
+                        <div class="card mb-4 mb-lg-0">
+                            <div class="card-body p-0">
+                                {{-- ? Existen los permisos? --}}
+                                @if (isset($estudios))
+                                    {{-- * Recorremos --}}
+                                    @foreach ($estudios as $estudio)
+                                        {{-- ? Tiene estudio --}}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                            <p class="mb-0">{{ $estudio['titulo'] ?? 'N/A' }}</p>
+                                            <i
+                                                class="bi bi-check-circle-fill text-{{ $estudio['status'] ? 'success' : 'danger' }}"></i>
+                                        </li>
+                                    @endforeach
+                                @endif
+
+                            </div>
+                        </div>
+
                     </div>
 
                     {{-- * Seccion derecha --}}

@@ -28,7 +28,7 @@
     @endif
 
     {{-- Scrips --}}
-    <script src="{{ asset('js/globales.js') }}"></script>
+    <script src="{{ asset('js/global.js') }}"></script>
 
 </body>
 

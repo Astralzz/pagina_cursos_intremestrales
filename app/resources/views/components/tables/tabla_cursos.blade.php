@@ -33,7 +33,7 @@
             @endisset
 
             {{-- Barra de busqueda --}}
-            <form class="d-flex" method="POST" action="{{ isset($datosBuscar) ? $datosBuscar['ruta'] : '#' }}">
+            <form class="d-flex" method="GET" action="{{ isset($datosBuscar) ? $datosBuscar['ruta'] : '#' }}">
                 @csrf
                 <input required name="titulo_buscar" class="form-control me-2" type="search" minlength="2"
                     maxlength="240" placeholder="Buscar titulo"
@@ -66,42 +66,110 @@
                 <p class="text-center">La lista está vacía.</p>
             </div>
         @else
+            {{-- Tabla de cursos --}}
             <table class="table table-striped">
+
+                {{-- Titulos --}}
                 <thead>
                     <tr>
+
+                        {{-- Numero --}}
                         <th scope="col">No</th>
+
                         {{-- ? Existen columnas --}}
                         @isset($listaColumnas)
                             @foreach ($listaColumnas as $columna)
                                 <th scope="col">{{ ucfirst($columna) }}</th>
                             @endforeach
                         @endisset
+
+                        {{-- ? Existen acciones --}}
+                        @isset($listaAcciones)
+                            @if (!empty($listaAcciones))
+                                <th scope="col">Acciones</th>
+                            @endif
+                        @endisset
+
                     </tr>
                 </thead>
+                {{-- FilasF --}}
                 <tbody>
                     @foreach ($listaCursos as $curso)
                         <tr>
+
+                            {{-- Numeracion --}}
                             <th scope="row">{{ $loop->iteration }}</th>
 
                             {{-- ? Existe lista variables --}}
                             @isset($listaVariables)
-                                {{-- Recooremos --}}
+                                {{-- Recorremos --}}
                                 @foreach ($listaVariables as $variable)
-                                    {{-- ? Existe --}}
-                                    @if ($curso->{$variable})
-                                        <td>{{ $curso->{$variable} }}</td>
+                                    {{-- ? Existe sub dato --}}
+                                    @if (strpos($variable, '.') !== false)
+                                        @php
+                                            // Acceder a subdatos
+                                            $subVariables = explode('.', $variable);
+                                            $subValue = $curso;
+
+                                            // Recorremos
+                                            foreach ($subVariables as $subVariable) {
+                                                $subValue = $subValue->{$subVariable};
+                                            }
+                                        @endphp
+
+                                        <td>{{ $subValue }}</td>
+
+                                        {{-- Dato nomal --}}
+                                    @else
+                                        <td>{{ data_get($curso, $variable) ?? 'N/A' }}</td>
                                     @endif
                                 @endforeach
                             @endisset
 
-                            <td>
-                                {{-- <a href="{{ route('editar.curso', ['id' => $curso->id]) }}" class="btn btn-primary">Editar</a> --}}
-                                {{-- <button class="btn btn-danger" onclick="eliminarCurso({{ $curso->id }})">Eliminar</button> --}}
-                            </td>
+                            {{-- ? Existen acciones --}}
+                            @isset($listaAcciones)
+                                @if (!empty($listaAcciones))
+                                    <td>
+                                        {{-- ? Existe ver --}}
+                                        @if (in_array('ver', $listaAcciones))
+                                            <a href="{{ route('inf.curso.id', ['id' => $curso->id]) }}"
+                                                class="btn btn-outline-dark">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        @endif
+                                        {{-- ? Existe editar --}}
+                                        @if (in_array('editar', $listaAcciones))
+                                            <a href="{{ route('pre.editar.curso.id', ['id' => $curso->id ?? -1]) }}"
+                                                class="btn btn-outline-primary">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                        @endif
+                                        {{-- ? Existe eliminar --}}
+                                        @if (in_array('eliminar', $listaAcciones) && isset($usuario))
+                                            <form
+                                                action="{{ route('eliminar.curso.id', ['id_user' => $usuario->id, 'id_curso' => $curso->id]) }}"
+                                                method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    onclick="return confirm('{{ '¿Estás seguro de que quieres eliminar este curso?' }}')"
+                                                    class="btn btn-outline-danger">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </td>
+                                @endif
+                            @endisset
+
                         </tr>
                     @endforeach
                 </tbody>
+
             </table>
+
+            {{-- Modal de infomracion --}}
+            @include('components.modals.modal_informacion_curso')
         @endif
     @else
         <div class="alert alert-danger">

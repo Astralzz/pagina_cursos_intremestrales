@@ -66,9 +66,18 @@ Route::group(['prefix' => 'cursos'], function () {
 
     //STUB - Editar
     Route::post(
-        'editar',
+        'curso/editar/{id}',
         [cursoController::class, 'editar']
     )->name('curso.editar');
+
+    //STUB - Informacion de un curso por id
+    Route::get('curso/inf/{id}', [cursoController::class, 'infCursoPorId'])->name('inf.curso.id');
+
+    //STUB - Pre editar curso por id
+    Route::get('curso/pre/editar/{id}', [cursoController::class, 'preEditarCursoPorId'])->name('pre.editar.curso.id');
+
+    //STUB - Eliminar curso por id
+    Route::delete('curso/eliminar/{id_user}/{id_curso}', [cursoController::class, 'eliminarCursoPorId'])->name('eliminar.curso.id');
 
     //STUB - Listas
     Route::group(['prefix' => 'lista'], function () {
@@ -80,7 +89,7 @@ Route::group(['prefix' => 'cursos'], function () {
         Route::get('status/{id}/{status}', [cursoController::class, 'listaPorStatus'])->name('curso.lista.status');
 
         // Pos titulo
-        Route::post('titulo/{id}', [cursoController::class, 'listaPorTitulo'])->name('curso.lista.titulo');
+        Route::get('titulo/{id}', [cursoController::class, 'listaPorTitulo'])->name('curso.lista.titulo');
 
         // Publica
         Route::group(['prefix' => 'publica'], function () {
@@ -89,7 +98,7 @@ Route::group(['prefix' => 'cursos'], function () {
             Route::get('total', [cursoController::class, 'listaPublica'])->name('curso.lista.publica');
 
             // Pos titulo
-            Route::post('titulo', [cursoController::class, 'listaPublicaPorTitulo'])->name('curso.lista.publica.titulo');
+            Route::get('titulo', [cursoController::class, 'listaPublicaPorTitulo'])->name('curso.lista.publica.titulo');
         });
     });
 });

@@ -27,9 +27,11 @@
         ];
 
         // Columnas
-        $listaColumnas = ['Titulo', 'informacion', 'Tipo', 'Sede', 'Instructor', 'Inicio', 'Final'];
-        $listaVariables = ['nombre', 'informacion', 'tipo', 'sede', 'nombre_instructor', 'fecha_inicio', 'fecha_final'];
+        $listaColumnas = ['Titulo', 'Creador', 'informacion', 'Tipo', 'Sede', 'Instructor', 'Inicio', 'Final'];
+        $listaVariables = ['nombre', 'usuario.nombre', 'informacion', 'tipo', 'sede', 'nombre_instructor', 'fecha_inicio', 'fecha_final'];
 
+        // Acciones
+        $listaAcciones = ['ver'];
     @endphp
 
     @section('section_lista_cursos_publicos')

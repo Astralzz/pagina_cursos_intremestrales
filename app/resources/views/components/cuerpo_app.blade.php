@@ -1,8 +1,7 @@
   {{-- Pagina seleccionada --}}
   <div class="col py-3 contenedor-principal">
 
-      {{-- Comprobamos --}}
-      @if (isset($usuario))
+      @auth
           {{-- Inicio --}}
           @yield('section_inicio')
           @yield('section_lista_cursos')
@@ -12,6 +11,6 @@
           <div class="alert alert-danger">
               ERROR, No se ecncontro al ususario de la sesión actual
           </div>
-      @endif
+      @endauth
 
   </div>
