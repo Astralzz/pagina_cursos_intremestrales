@@ -8,6 +8,19 @@
         // ? Existe usaurio
         ${$variable} = session('infCurso')->$variable ?? 'N/A';
     }
+
+    $subVariables = ['categoria', 'creador'];
+
+    // * Recorremos
+    foreach ($subVariables as $variable) {
+        // ? Es creador
+        if ($variable === 'creador') {
+            ${$variable} = session('infCurso')->usuario->nombre ?? 'N/A';
+            continue;
+        }
+
+        ${$variable} = session('infCurso')->$variable->nombre ?? 'N/A';
+    }
 @endphp
 
 {{-- TODO -  FORMULARIO USUARIO --}}
@@ -44,6 +57,14 @@
                     <table class="table">
                         <tbody>
                             @foreach ($variables as $variable)
+                                <tr>
+                                    <th>{{ ucfirst(str_replace('_', ' ', $variable)) }}</th>
+                                    <td>{{ ${$variable} }}</td>
+                                </tr>
+                            @endforeach
+
+                            {{-- Recorremos subVariables --}}
+                            @foreach ($subVariables as $variable)
                                 <tr>
                                     <th>{{ ucfirst(str_replace('_', ' ', $variable)) }}</th>
                                     <td>{{ ${$variable} }}</td>

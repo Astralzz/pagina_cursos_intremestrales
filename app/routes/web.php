@@ -79,6 +79,9 @@ Route::group(['prefix' => 'cursos'], function () {
     //STUB - Eliminar curso por id
     Route::delete('curso/eliminar/{id_user}/{id_curso}', [cursoController::class, 'eliminarCursoPorId'])->name('eliminar.curso.id');
 
+    //STUB - Cambiar status curso
+    Route::get('curso/admin/cambiar/status/{id_user}/{id_curso}/{status}', [cursoController::class, 'actualizarStatusCurso'])->name('cambiar.status.curso.id');
+
     //STUB - Listas
     Route::group(['prefix' => 'lista'], function () {
 
@@ -99,6 +102,16 @@ Route::group(['prefix' => 'cursos'], function () {
 
             // Pos titulo
             Route::get('titulo', [cursoController::class, 'listaPublicaPorTitulo'])->name('curso.lista.publica.titulo');
+        });
+
+        // Administrador
+        Route::group(['prefix' => 'admin'], function () {
+
+            // Completa
+            Route::get('total', [cursoController::class, 'listaPorAceptar'])->name('curso.lista.admin.espera');
+
+            // Pos titulo
+            Route::get('titulo', [cursoController::class, 'listaPorAceptarPorTitulo'])->name('curso.lista.espera.titulo');
         });
     });
 });

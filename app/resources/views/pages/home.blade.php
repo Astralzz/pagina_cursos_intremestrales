@@ -15,21 +15,21 @@
             // Aceptar cursos
             [
                 'permiso' => $usuario->rol->is_admin,
-                'titulo' => 'Aceptar cursos',
-                'ruta' => route('index'),
-                'icono' => 'bi bi-journals',
+                'titulo' => 'Cursos por aceptar',
+                'ruta' => route('curso.lista.admin.espera'),
+                'icono' => 'bi bi-exclamation-triangle-fill',
             ],
             [
                 'permiso' => true,
-                'titulo' => 'Ver mis cursos',
+                'titulo' => 'Mis cursos',
                 'ruta' => route('curso.lista.id', ['id' => $usuario->id]),
-                'icono' => 'bi bi-journals',
+                'icono' => 'bi bi-person-check-fill',
             ],
             [
                 'permiso' => true,
                 'titulo' => 'Cursos publicos',
                 'ruta' => route('curso.lista.publica'),
-                'icono' => 'bi bi-journals',
+                'icono' => 'bi bi-globe-americas',
             ],
         ];
     @endphp
@@ -71,7 +71,7 @@
                             {{-- Enlace --}}
                             <a href="/" class="nav-link align-middle px-0 text-white">
                                 {{-- Icono --}}
-                                <i class="fs-4 bi-house"></i>
+                                <i class="fs-4 bi-house-fill"></i>
                                 {{-- Texto --}}
                                 <span class="ms-1 d-none d-sm-inline">Inicio</span>
                             </a>
@@ -82,7 +82,7 @@
                         <li>
                             <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
                                 data-bs-target="#modal_registro_curso">
-                                <i class="bi bi-box-arrow-right"></i>
+                                <i class="bi bi-file-earmark-plus-fill"></i>
                                 <span class="ms-1 d-none d-sm-inline">
                                     Crear curso
                                 </span>
@@ -113,7 +113,7 @@
                         <li>
                             <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
                                 data-bs-target="#modal_registro_usuario">
-                                <i class="bi bi-box-arrow-right"></i>
+                                <i class="bi bi-pencil-fill"></i>
                                 <span class="ms-1 d-none d-sm-inline">
                                     Modificar perfil</span>
                             </a>

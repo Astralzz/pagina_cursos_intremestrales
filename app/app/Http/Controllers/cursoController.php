@@ -238,6 +238,54 @@ class cursoController extends Controller
         }
     }
 
+    // * Cambiar status por id
+    public function actualizarStatusCurso($id_user, $id_curso, $status)
+    {
+        try {
+
+            // ? Son diferentes
+            if (auth()->id() != $id_user) {
+                throw new \Exception('No tienes autorización para eliminar este curso');
+            }
+
+            // Obtenemos el usuario autenticado
+            $usuarioAutenticado =  auth()->user();
+
+            // ? No existe
+            if (!$usuarioAutenticado) {
+                throw new \Exception('No se encontró un usuario activo');
+            }
+
+            // Obtenemos el rol del usuario
+            $rolUsuario = $usuarioAutenticado->rol;
+
+            // ? No se tiene permiso
+            if (!$rolUsuario || $rolUsuario->is_admin !== 1) {
+                throw new \Exception('No tienes permiso, solo los administradores pueden acceder a esta esta opción');
+            }
+
+            // ? Opción no vaída
+            if ($status != "ACEPTADO" && $status != "RECHAZADO") {
+                throw new \Exception('El status es incorrecto, solo se admite ACEPTADO o RECHAZADO');
+            }
+
+            // Buscamos
+            $curso = $this->curso->findOrFail($id_curso);
+
+            // Actualizamos
+            $curso->update([
+                'status' => $status,
+            ]);
+
+            // Devolver exito
+            return redirect()->back()->with('exito_action_tabla', 'Exito, el curso se actualizo correctamente');
+
+            // ! Eliminar
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error_action_tabla', 'Error al actualizar estatus, ' . $e->getMessage());
+        }
+    }
+
     // * Lista por id
     public function listaPorId($id)
     {
@@ -293,12 +341,67 @@ class cursoController extends Controller
             // Devolver la vista con la lista de cursos del usuario
             return view('sections.lista_cursos_publicos', [
                 'listaCursos' => $lista,
-                'titulo' => 'Todos mis cursos',
+                'titulo' => 'Todos los cursos',
             ]);
 
             // ! - error
         } catch (\Exception $e) {
             return view('sections.lista_cursos_publicos')
+                ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
+        }
+    }
+
+    // * Lista por aceptar
+    public function listaPorAceptar()
+    {
+        try {
+
+            // Obtenemos el usuario autenticado
+            $usuarioAutenticado =  auth()->user();
+
+            // ? No existe
+            if (!$usuarioAutenticado) {
+                throw new \Exception('No se encontró un usuario activo');
+            }
+
+            // Obtenemos el rol del usuario
+            $rolUsuario = $usuarioAutenticado->rol;
+
+            // ? No se tiene permiso
+            if (!$rolUsuario || $rolUsuario->is_admin !== 1) {
+                throw new \Exception('No tienes permiso, solo los administradores pueden ver esta sección');
+            }
+
+            // Obtenemos aceptados
+            $lista = $this->curso
+                ->with([
+                    'usuario:id,nombre',
+                    'categoria:id,nombre'
+                ])
+                ->where('status', 'ESPERA')
+                ->select([
+                    'id',
+                    'nombre',
+                    'informacion',
+                    'tipo',
+                    'nombre_instructor',
+                    'sede',
+                    'fecha_inicio',
+                    'fecha_final',
+                    'user_id',
+                    'categoria_id'
+                ])
+                ->get();
+
+            // Devolver la vista con la lista de cursos del usuario
+            return view('sections.lista_cursos_por_aceptar', [
+                'listaCursos' => $lista,
+                'titulo' => 'Cursos por aceptar',
+            ]);
+
+            // ! - error
+        } catch (\Exception $e) {
+            return view('sections.lista_cursos_por_aceptar')
                 ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
         }
     }
@@ -406,7 +509,47 @@ class cursoController extends Controller
             // Devolver la vista con la lista de cursos del usuario
             return view('sections.lista_cursos_publicos', [
                 'listaCursos' => $lista,
-                'titulo' => 'Todos mis cursos',
+                'titulo' => 'Cursos publicos',
+                'titulo_buscar' => $request->input('titulo_buscar'),
+            ]);
+
+            // ! - Error
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput($request->only(
+                    'titulo_buscar',
+                ))
+                ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
+        }
+    }
+
+    // * Lista por aceptar titulo
+    public function listaPorAceptarPorTitulo(Request $request)
+    {
+        try {
+
+            // Validamos
+            $request->validate(
+                [
+                    'titulo_buscar' => 'required|string|min:2|max:240'
+                ],
+                [
+                    'titulo_buscar.required' => 'El campo titulo es requerido.',
+                    'titulo_buscar.string' => 'El campo titulo debe ser una cadena de texto.',
+                    'titulo_buscar.min' => 'El campo titulo debe tener al menos 2 caracteres.',
+                    'titulo_buscar.max' => 'El campo titulo debe tener como máximo 240 caracteres.',
+                ]
+            );
+
+            // Obtenemos
+            $lista = $this->curso->where('status', 'ESPERA')
+                ->where('nombre', 'like', '%' . $request->input('titulo_buscar') . '%')
+                ->get();
+
+            // Devolver la vista con la lista de cursos del usuario
+            return view('sections.lista_cursos_por_aceptar', [
+                'listaCursos' => $lista,
+                'titulo' => 'Cursos por aceptar',
                 'titulo_buscar' => $request->input('titulo_buscar'),
             ]);
 

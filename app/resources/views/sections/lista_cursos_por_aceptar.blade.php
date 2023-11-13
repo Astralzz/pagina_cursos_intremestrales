@@ -15,23 +15,26 @@
         // Secciones del filtro
         $seccionesFiltro = [
             [
-                'titulo' => 'Cursos publicos',
-                'ruta' => route('curso.lista.publica'),
+                'titulo' => 'Cursos por aceptar',
+                'ruta' => route('curso.lista.admin.espera'),
             ],
         ];
 
         // Ruta para buscar
         $datosBuscar = [
             'titulo' => isset($titulo_buscar) ? $titulo_buscar : old('titulo_buscar') ?? '',
-            'ruta' => route('curso.lista.publica.titulo'),
+            'ruta' => route('curso.lista.espera.titulo'),
         ];
 
         // Columnas
-        $listaColumnas = ['Titulo', 'Creador', 'informacion', 'Tipo', 'Sede', 'Instructor', 'Inicio', 'Final'];
-        $listaVariables = ['nombre', 'usuario.nombre', 'informacion', 'tipo', 'sede', 'nombre_instructor', 'fecha_inicio', 'fecha_final'];
+        $listaColumnas = ['Titulo', 'Creador', 'informacion', 'Inicio', 'Final'];
+        $listaVariables = ['nombre', 'usuario.nombre', 'informacion', 'fecha_inicio', 'fecha_final'];
 
         // Acciones
         $listaAcciones = ['ver'];
+
+        // Acciones
+        $listaAccionesAdmin = ['aceptar', 'rechazar'];
     @endphp
 
     @section('section_lista_cursos_publicos')

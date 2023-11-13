@@ -83,16 +83,30 @@
                             @endforeach
                         @endisset
 
-                        {{-- ? Existen acciones --}}
+                        {{-- ? Existen acciones de admin --}}
                         @isset($listaAcciones)
                             @if (!empty($listaAcciones))
                                 <th scope="col">Acciones</th>
                             @endif
                         @endisset
 
+                        {{-- ? Existen acciones de administrador --}}
+                        @isset($listaAccionesAdmin)
+                            @if (!empty($listaAccionesAdmin))
+                                {{-- ? Existe aceptar --}}
+                                @if (in_array('aceptar', $listaAccionesAdmin))
+                                    <th scope="col">Aceptar</th>
+                                @endif
+                                {{-- ? Existe rechazar --}}
+                                @if (in_array('rechazar', $listaAccionesAdmin))
+                                    <th scope="col">Rechazar</th>
+                                @endif
+                            @endif
+                        @endisset
+
                     </tr>
                 </thead>
-                {{-- FilasF --}}
+                {{-- Filas --}}
                 <tbody>
                     @foreach ($listaCursos as $curso)
                         <tr>
@@ -159,6 +173,30 @@
                                             </form>
                                         @endif
                                     </td>
+                                @endif
+                            @endisset
+
+                            {{-- ? Existen acciones de administrador --}}
+                            @isset($listaAccionesAdmin)
+                                @if (!empty($listaAccionesAdmin))
+                                    {{-- ? Existe aceptar --}}
+                                    @if (in_array('aceptar', $listaAccionesAdmin) && isset($usuario))
+                                        <td>
+                                            <a href="{{ route('cambiar.status.curso.id', ['id_user' => $usuario->id, 'id_curso' => $curso->id, 'status' => 'ACEPTADO']) }}"
+                                                class="btn btn-outline-success">
+                                                Aceptar
+                                            </a>
+                                        </td>
+                                    @endif
+                                    {{-- ? Existe rechazar --}}
+                                    @if (in_array('rechazar', $listaAccionesAdmin) && isset($usuario))
+                                        <td>
+                                            <a href="{{ route('cambiar.status.curso.id', ['id_user' => $usuario->id, 'id_curso' => $curso->id, 'status' => 'RECHAZADO']) }}"
+                                                class="btn btn-outline-danger">
+                                                Rechazar
+                                            </a>
+                                        </td>
+                                    @endif
                                 @endif
                             @endisset
 
