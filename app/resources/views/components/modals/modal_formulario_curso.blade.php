@@ -148,9 +148,9 @@
                             value="{{ isset($fecha_final) ? $fecha_final : '' }}">
                     </div>
 
-                    {{-- * - DOMICILIO --}}
+                    {{-- * - DETALLES --}}
                     <div class="input-group mb-3">
-                        <span class="input-group-text">DOMICILIO</span>
+                        <span class="input-group-text">DETALLES</span>
                         <textarea name="informacion" minlength="5" autocomplete="home" class="form-control" rows="3">@php echo isset($informacion) ? $informacion : ''; @endphp</textarea>
                     </div>
 
