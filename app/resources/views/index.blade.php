@@ -16,6 +16,9 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
     <title>CURSOS ITERNACIONALES</title>
+
+    {{-- estilos livewire --}}
+    @livewireStyles
 </head>
 
 <body>
@@ -30,6 +33,12 @@
     {{-- Scrips --}}
     <script src="{{ asset('js/global.js') }}"></script>
 
+    {{-- SweetAlert2  --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {{-- Scrip livewire --}}
+    @livewireScripts
+    @yield('scrips')
 </body>
 
 </html>

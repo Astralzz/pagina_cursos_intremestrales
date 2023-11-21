@@ -71,4 +71,4 @@ Artisan::command('insert-cursos-random', function () {
     } catch (Exception $e) {
         $this->error('Ocurrió un error: ' . $e->getMessage());
     }
-})->describe('Inserta 50 usuarios aleatorios a la tabla user.');
+})->describe('Inserta 50 usuarios aleatorios a la tabla cursos.');

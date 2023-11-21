@@ -78,7 +78,11 @@
                     </form>
 
                     {{-- Modal del formulario --}}
-                    @include('components.modals.modal_formulario_usuario')
+                    {{-- @include('components.modals.modal_formulario_usuario') --}}
+
+                    {{-- Modal del formulario con livewire --}}
+                    <livewire:formulario-usuario />
+
                 </div>
             </div>
         </div>
