@@ -4,35 +4,35 @@
 {{-- ? Existe un usuario? --}}
 @auth
 
-    @php
+@php
 
-        // Variable usuario
-        $usuario = auth()
-            ->user()
-            ->load('estudios', 'cursos', 'rol');
+// Variable usuario
+$usuario = auth()
+->user()
+->load('estudios', 'cursos', 'rol');
 
-        $secciones = [
-            // Aceptar cursos
-            [
-                'permiso' => $usuario->rol->is_admin,
-                'titulo' => 'Cursos por aceptar',
-                'ruta' => route('curso.lista.admin.espera'),
-                'icono' => 'bi bi-exclamation-triangle-fill',
-            ],
-            [
-                'permiso' => true,
-                'titulo' => 'Mis cursos',
-                'ruta' => route('curso.lista.id', ['id' => $usuario->id]),
-                'icono' => 'bi bi-person-check-fill',
-            ],
-            [
-                'permiso' => true,
-                'titulo' => 'Cursos publicos',
-                'ruta' => route('curso.lista.publica'),
-                'icono' => 'bi bi-globe-americas',
-            ],
-        ];
-    @endphp
+$secciones = [
+// Aceptar cursos
+[
+'permiso' => $usuario->rol->is_admin,
+'titulo' => 'Cursos por aceptar',
+'ruta' => route('curso.lista.admin.espera'),
+'icono' => 'bi bi-exclamation-triangle-fill',
+],
+[
+'permiso' => true,
+'titulo' => 'Mis cursos',
+'ruta' => route('curso.lista.id', ['id' => $usuario->id]),
+'icono' => 'bi bi-person-check-fill',
+],
+[
+'permiso' => true,
+'titulo' => 'Cursos publicos',
+'ruta' => route('curso.lista.publica'),
+'icono' => 'bi bi-globe-americas',
+],
+];
+@endphp
 
 @endauth
 
@@ -59,68 +59,72 @@
 
                 <br>
 
-                {{-- *  Lista de secciones -------------------------------- --}}
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
-                    id="menu">
+                {{-- * Lista de secciones -------------------------------- --}}
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
 
                     {{-- ? Existen las secciones --}}
                     @if (isset($secciones))
 
-                        {{-- * Seccion del iInicio --}}
-                        <li class="nav-item">
-                            {{-- Enlace --}}
-                            <a href="/" class="nav-link align-middle px-0 text-white">
-                                {{-- Icono --}}
-                                <i class="fs-4 bi-house-fill"></i>
-                                {{-- Texto --}}
-                                <span class="ms-1 d-none d-sm-inline">Inicio</span>
-                            </a>
-                        </li>
+                    {{-- * Seccion del iInicio --}}
+                    <li class="nav-item">
+                        {{-- Enlace --}}
+                        <a href="/" class="nav-link align-middle px-0 text-white">
+                            {{-- Icono --}}
+                            <i class="fs-4 bi-house-fill"></i>
+                            {{-- Texto --}}
+                            <span class="ms-1 d-none d-sm-inline">Inicio</span>
+                        </a>
+                    </li>
 
 
-                        {{-- * Crear curso --}}
-                        <li>
-                            <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
-                                data-bs-target="#modal_registro_curso">
-                                <i class="bi bi-file-earmark-plus-fill"></i>
-                                <span class="ms-1 d-none d-sm-inline">
-                                    Crear curso
-                                </span>
-                            </a>
-                        </li>
+                    {{-- * Crear curso --}}
+                    <li>
+                        <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
+                            data-bs-target="#modal_registro_curso">
+                            <i class="bi bi-file-earmark-plus-fill"></i>
+                            <span class="ms-1 d-none d-sm-inline">
+                                Crear curso
+                            </span>
+                        </a>
+                    </li>
 
-                        {{-- Modal del formulario usuario --}}
-                        @include('components.modals.modal_formulario_curso')
+                    {{-- Modal del formulario usuario --}}
+                    {{-- @include('components.modals.modal_formulario_curso') --}}
 
-                        {{-- * Recorremos --}}
-                        @foreach ($secciones as $seccion)
-                            {{-- ? Tiene permiso --}}
-                            @if ($seccion['permiso'])
-                                <li class="dropdown">
-                                    {{-- * Encabezado  --}}
-                                    <a href="{{ $seccion['ruta'] ?? '#' }}"
-                                        class="nav-link px-0 align-middle text-white">
-                                        {{-- Icono --}}
-                                        <i class="{{ $seccion['icono'] ?? '' }}"></i>
-                                        {{-- Texto --}}
-                                        <span class="ms-1 d-none d-sm-inline">{{ $seccion['titulo' ?? '????'] }}</span>
-                                    </a>
-                                </li>
-                            @endif
-                        @endforeach
+                    {{-- Modal del formulario con livewire --}}
+                    <livewire:formulario-cursos  />
 
-                        {{-- * Modificar peril --}}
-                        <li>
-                            <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
-                                data-bs-target="#modal_registro_usuario">
-                                <i class="bi bi-pencil-fill"></i>
-                                <span class="ms-1 d-none d-sm-inline">
-                                    Modificar perfil</span>
-                            </a>
-                        </li>
+                    {{-- * Recorremos --}}
+                    @foreach ($secciones as $seccion)
+                    {{-- ? Tiene permiso --}}
+                    @if ($seccion['permiso'])
+                    <li class="dropdown">
+                        {{-- * Encabezado --}}
+                        <a href="{{ $seccion['ruta'] ?? '#' }}" class="nav-link px-0 align-middle text-white">
+                            {{-- Icono --}}
+                            <i class="{{ $seccion['icono'] ?? '' }}"></i>
+                            {{-- Texto --}}
+                            <span class="ms-1 d-none d-sm-inline">{{ $seccion['titulo' ?? '????'] }}</span>
+                        </a>
+                    </li>
+                    @endif
+                    @endforeach
 
-                        {{-- Modal del formulario usuario --}}
-                        @include('components.modals.modal_formulario_usuario')
+                    {{-- * Modificar peril --}}
+                    <li>
+                        <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
+                            data-bs-target="#modal_registro_usuario">
+                            <i class="bi bi-pencil-fill"></i>
+                            <span class="ms-1 d-none d-sm-inline">
+                                Modificar perfil</span>
+                        </a>
+                    </li>
+
+                    {{-- Modal del formulario usuario --}}
+                    {{-- @include('components.modals.modal_formulario_usuario') --}}
+
+                    {{-- Modal del formulario con livewire --}}
+                    <livewire:formulario-usuario />
 
                     @endif
 

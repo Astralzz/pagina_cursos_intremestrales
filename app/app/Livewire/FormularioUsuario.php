@@ -3,14 +3,15 @@
 namespace App\Livewire;
 
 use App\Http\Controllers\rolUsuarioController;
+use App\Models\Estudios_usuario;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
 //TODO - Formulario usuario
 class FormularioUsuario extends Component
 {
-
 
     // * Elementos
     public $nombre;
@@ -36,6 +37,11 @@ class FormularioUsuario extends Component
 
     // * usuario
     public $usuario;
+    public $estudio;
+
+
+    // * Accion
+    public $accionFom = "guardarUsuario";
 
 
     // * Mostrar contraseña
@@ -43,6 +49,8 @@ class FormularioUsuario extends Component
 
     // * Roles usuarios
     public $roles_usuarios;
+
+    // * Estudios usuarios
     public $estudios_usuario = [
         'licenciatura', 'maestria',
         'doctorado', 'postgrado'
@@ -61,11 +69,36 @@ class FormularioUsuario extends Component
     protected $rules = [];
     protected $messages = [];
 
+    //TODO - Constructor
     public function __construct()
     {
+
+        // Iniciamos
         $this->roles_usuarios = rolUsuarioController::lista();
+        $this->estudio = new Estudios_usuario();
         $this->usuario = Auth::user();
 
+        // ? Usuario diferente de null
+        if ($this->usuario) {
+            $this->nombre = $this->usuario->nombre;
+            $this->email = $this->usuario->email;
+            $this->clave_propuesta = $this->usuario->clave_propuesta;
+            $this->tipo_puesto = $this->usuario->tipo_puesto;
+            $this->nivel_puesto = $this->usuario->nivel_puesto;
+            $this->rol_id = $this->usuario->rol_id;
+            $this->telefono = $this->usuario->telefono;
+            $this->rfc = $this->usuario->rfc;
+            $this->institucion = $this->usuario->institucion;
+            $this->departamento = $this->usuario->departamento;
+            $this->nombre_jefe = $this->usuario->nombre_jefe;
+            $this->horario = $this->usuario->horario;
+            $this->domicilio = $this->usuario->domicilio;
+
+            // Actualizar
+            $this->accionFom = "actualizarUsuario";
+        }
+
+        // * Variables de estudio
         foreach ($this->estudios_usuario as $variable) {
             $this->$variable = $this->usuario && $this->usuario->estudios->$variable ?? false;
         }
@@ -77,14 +110,13 @@ class FormularioUsuario extends Component
     // * Validaciones
     protected function rules()
     {
-        return  [
+        $rules =  [
             'nombre' => 'required|string|min:5|max:240',
             'password' => 'required|string|min:8|max:16',
-            'password2' => 'required|string|min:8|max:16',
             'rol_id' => 'required|numeric',
             'rfc' => 'nullable|string|min:12|max:12',
             'telefono' => 'required|numeric|digits:10',
-            'email' => 'required|unique:users,email|email|string|min:5|max:120',
+            'email' => 'required' .  ((!$this->usuario) ? '|unique:users,email' : '') . '|email|string|min:5|max:120',
             'clave_propuesta' => 'nullable|numeric|digits:8',
             'tipo_puesto' => 'nullable|in:BASE,INTERNO',
             'nivel_puesto' => 'nullable|in:FUNCIONARIO,ENLACE,OPERATIVO',
@@ -97,8 +129,15 @@ class FormularioUsuario extends Component
             'maestria' => 'nullable|boolean',
             'doctorado' => 'nullable|boolean',
             'postgrado' => 'nullable|boolean',
-            'admin_key' => 'nullable|numeric|digits:12',
         ];
+
+        // ? No existe
+        if (!$this->usuario) {
+            $rules['admin_key'] = (($this->rol_id == 1) ? 'required' : 'nullable') . '|numeric|digits:12|in:' . env('KEY_ADMIN');
+            $rules['password2'] = 'required|string|min:8|max:16|same:password';
+        }
+
+        return $rules;
     }
 
     // * Respuestas de rules
@@ -155,6 +194,7 @@ class FormularioUsuario extends Component
             'maestria.boolean' => 'El campo Maestría debe ser un valor booleano.',
             'doctorado.boolean' => 'El campo Doctorado debe ser un valor booleano.',
             'postgrado.boolean' => 'El campo Postgrado debe ser un valor booleano.',
+            'admin_key.required' => 'El campo clave administrador es requerido.',
             'admin_key.numeric' => 'El campo clave administrador debe ser numérica.',
             'admin_key.digits' => 'El campo clave administrador debe tener 12 dígitos.',
             'admin_key.in' => 'La clave administrador no es válida.',
@@ -167,17 +207,13 @@ class FormularioUsuario extends Component
         $this->rules = $this->rules();
         $this->messages = $this->messages();
 
-        // ? No existe empty es vacía
-        if (env('ADMIN_KEY') !== null) {
-            $this->addError('admin_key', 'La clave de administrador no está configurada correctamente en el archivo .env.');
-            return;
-        }
-
-        // Agregar reglas de validación adicionales
-        $this->rules['password2'] = 'required|string|min:8|max:16|same:password';
-        $this->rules['admin_key'] = 'required|numeric|digits:12|in:' . env('ADMIN_KEY');
-
         $this->validate();
+    }
+
+    // * Obtener datos validados
+    protected function getData()
+    {
+        return $this->validate();
     }
 
     // * Validar e tiempo real
@@ -186,21 +222,32 @@ class FormularioUsuario extends Component
         $this->validateOnly($propertyName);
     }
 
-    // * Acción formulario
+    // * Guardar usuario
     public function guardarUsuario()
     {
 
-        // * Validamos
-        // $validatedData =  $this->applyValidation();
+        // Validamos
+        $this->applyValidation();
 
-        // dd($validatedData);
+        // Obtenemos los datos validados
+        $validatedData = $this->getData();
 
-        // Creamos
-        // User::create($validatedData);
+        // Asegurarnos de que 'tipo_puesto' tenga un valor
+        $validatedData['tipo_puesto'] = $validatedData['tipo_puesto'] ?? 'BASE';
+        $validatedData['nivel_puesto'] = $validatedData['nivel_puesto'] ?? 'FUNCIONARIO';
+        $validatedData['password'] = Hash::make($validatedData['password']);
 
-        // Eventos success
-        // $this->emit('postAdded');
+        // Creamos el usuario
+        $nuevoUsuario = User::create($validatedData);
 
+        // Creamos estudio
+        $this->estudio->create([
+            'user_id' => $nuevoUsuario->id,
+            'licenciatura' => $this->licenciatura,
+            'maestria' =>  $this->maestria,
+            'doctorado' => $this->doctorado,
+            'postgrado' => $this->postgrado
+        ]);
 
         // Lanzamos evento
         $this->dispatch('alert-swall', [
@@ -209,9 +256,58 @@ class FormularioUsuario extends Component
             'tipo' => 'success'
         ]);
 
-
         // Limpiamos
         $this->reset($this->variables);
+    }
+
+
+    // * Actualizar usuario
+    public function actualizarUsuario()
+    {
+
+        // Validamos
+        $this->applyValidation();
+
+        // Obtenemos los datos validados
+        $validatedData = $this->getData();
+
+        // Obtenemos el usuario
+        $usuario = User::find($this->usuario->id);
+
+        // ? Pass incorrecta
+        if (!Hash::check($validatedData['password'], $usuario->password)) {
+            $this->dispatch('alert-swall', [
+                'titulo' => 'Error',
+                'mensaje' => 'La contraseña proporcionada no es correcta',
+                'tipo' => 'error'
+            ]);
+
+            return;
+        }
+
+        // Eliminamos la contraseña
+        unset($validatedData['password']);
+
+        // Actualizamos los campos del usuario
+        $usuario->update($validatedData);
+
+        // Obtenemos el estudio asociado al usuario
+        $estudio = $this->estudio->where('user_id', $usuario->id)->first();
+
+        // Creamos estudio
+        $estudio->update([
+            'licenciatura' => $this->licenciatura,
+            'maestria' =>  $this->maestria,
+            'doctorado' => $this->doctorado,
+            'postgrado' => $this->postgrado
+        ]);
+
+        // Lanzamos evento
+        $this->dispatch('alert-swall', [
+            'titulo' => 'Exito',
+            'mensaje' => 'El usuario se actualizo correctamente',
+            'tipo' => 'success'
+        ]);
     }
 
     // * Vista

@@ -50,7 +50,7 @@
         }
 
         // Acciones
-        $listaAcciones = ['ver', 'editar', 'eliminar'];
+        $listaAcciones = ['ver', 'eliminar'];
 
     @endphp
 
