@@ -4,6 +4,7 @@ use App\Http\Controllers\cursoController;
 use App\Http\Controllers\usuarioController;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -82,6 +83,9 @@ Route::group(['prefix' => 'cursos'], function () {
     //STUB - Cambiar status curso
     Route::get('curso/admin/cambiar/status/{id_user}/{id_curso}/{status}', [cursoController::class, 'actualizarStatusCurso'])->name('cambiar.status.curso.id');
 
+    //STUB - Crear pdf
+    Route::get('/generar-pdf/{id}', [cursoController::class, 'crearPdf'])->name('curso.generar.pdf');
+
     //STUB - Listas
     Route::group(['prefix' => 'lista'], function () {
 
@@ -114,4 +118,5 @@ Route::group(['prefix' => 'cursos'], function () {
             Route::get('titulo', [cursoController::class, 'listaPorAceptarPorTitulo'])->name('curso.lista.espera.titulo');
         });
     });
+
 });

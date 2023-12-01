@@ -7,6 +7,8 @@ use App\Models\Curso;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class cursoController extends Controller
 {
@@ -563,6 +565,61 @@ class cursoController extends Controller
         }
     }
 
+    // * Crear pdf
+    public function crearPdf($id)
+    {
+        try {
+            // Obtener el curso con el ID proporcionado
+            $curso = $this->curso->find($id);
+
+            // ? Existe
+            if (!$curso) {
+                return redirect()->back()->with('error_pdf', 'No se encontró el curso con el ID proporcionado.');
+            }
+
+            // Variables
+            $variables = ['nombre', 'informacion', 'tipo', 'nombre_instructor', 'sede', 'fecha_inicio', 'fecha_final'];
+            $subVariables = ['categoria'];
+
+            $datosCurso = [];
+
+            // Obtenemos datos primarios
+            foreach ($variables as $variable) {
+                $datosCurso[$variable] = $curso->{$variable} ?? "N/A";
+            }
+
+            // Obtenemos datos secundarios
+            foreach ($subVariables as $variable) {
+                // Verificar si la relación está definida y no es nula
+                if ($curso->{$variable}) {
+                    $datosCurso[$variable] = $curso->{$variable}->nombre;
+                } else {
+                    // Si la relación es nula, puedes manejarlo de alguna manera
+                    $datosCurso[$variable] = 'N/A';
+                }
+            }
+
+            $datosCurso['creador'] =  auth()
+                ->user()->nombre ?? "N/A";
+
+            // dd(['datosCurso' => $datosCurso]);
+
+            // Carga la vista del PDF con los datos
+            $pdf = Pdf::loadView('pdf.curso', ['data' => $datosCurso]);
+
+            // Descarga el PDF
+            return $pdf->download('informacion_curso_' . ($curso->nombre ?? 'NC') . '.pdf');
+
+            // ! Error
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'infCurso' => $curso,
+                'infCursoTitulo' => 'Detalle del curso ' . $curso->nombre,
+                'error_pdf', 'Ocurrió un error al generar el PDF.' . $e->getMessage()
+            ]);
+        }
+    }
+
     //SECTION - Privadas ----------------
 
 
@@ -583,3 +640,7 @@ class cursoController extends Controller
             ->with('error_formulario_curso', $mensaje);
     }
 }
+
+
+ // Log del error
+            // Log::error('Error al generar el PDF: ' . $e->getMessage());

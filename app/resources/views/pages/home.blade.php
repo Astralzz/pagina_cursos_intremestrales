@@ -80,7 +80,7 @@ $secciones = [
                     {{-- * Crear curso --}}
                     <li>
                         <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
-                            data-bs-target="#modal_registro_curso">
+                            data-bs-target="#modal_registro_curso" style="cursor: pointer;">
                             <i class="bi bi-file-earmark-plus-fill"></i>
                             <span class="ms-1 d-none d-sm-inline">
                                 Crear curso
@@ -92,7 +92,7 @@ $secciones = [
                     {{-- @include('components.modals.modal_formulario_curso') --}}
 
                     {{-- Modal del formulario con livewire --}}
-                    <livewire:formulario-cursos  />
+                    <livewire:formulario-cursos />
 
                     {{-- * Recorremos --}}
                     @foreach ($secciones as $seccion)
@@ -113,7 +113,7 @@ $secciones = [
                     {{-- * Modificar peril --}}
                     <li>
                         <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
-                            data-bs-target="#modal_registro_usuario">
+                            data-bs-target="#modal_registro_usuario" style="cursor: pointer;">
                             <i class="bi bi-pencil-fill"></i>
                             <span class="ms-1 d-none d-sm-inline">
                                 Modificar perfil</span>

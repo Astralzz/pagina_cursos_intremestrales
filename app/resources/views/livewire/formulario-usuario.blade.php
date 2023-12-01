@@ -194,11 +194,17 @@
     @section('scrips')
     <script>
         window.addEventListener('alert-swall', event => {
-                Swal.fire({
-                    title: event.detail[0].titulo,
-                    text: event.detail[0].mensaje,
-                    icon: event.detail[0].tipo
-                });
+            Swal.fire({
+                title: event.detail[0].titulo,
+                text: event.detail[0].mensaje,
+                icon: event.detail[0].tipo
+            }).then(() => {
+                // ? No es success
+                if(event.detail[0].tipo !== "success") return;
+
+                // Cierra el modal después de mostrar el mensaje
+                $('#modal_registro_usuario').modal('hide');
+            });
             })
     </script>
     @endsection
