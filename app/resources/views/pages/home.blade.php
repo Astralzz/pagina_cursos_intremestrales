@@ -14,6 +14,12 @@ $usuario = auth()
 $secciones = [
 // Aceptar cursos
 [
+'permiso' =>  $usuario->rol->is_admin,
+'titulo' => 'Lista de usuarios',
+'ruta' => route('usuario.lista.no.admin'),
+'icono' => 'bi bi-people-fill',
+],
+[
 'permiso' => $usuario->rol->is_admin,
 'titulo' => 'Cursos por aceptar',
 'ruta' => route('curso.lista.admin.espera'),
@@ -93,6 +99,24 @@ $secciones = [
 
                     {{-- Modal del formulario con livewire --}}
                     <livewire:formulario-cursos />
+
+
+                    {{-- ? ES admin --}}
+                    @if ($usuario->rol->is_admin)
+                    {{-- * Crear categoria --}}
+                    <li>
+                        <a class="nav-link px-0 align-middle text-white" data-bs-toggle="modal"
+                            data-bs-target="#modal_registro_categoria" style="cursor: pointer;">
+                            <i class="bi bi-bookmark-check-fill"></i>
+                            <span class="ms-1 d-none d-sm-inline">
+                                Crear categoria
+                            </span>
+                        </a>
+                    </li>
+
+                    {{-- Modal del formulario con livewire --}}
+                    <livewire:formulario-categoria-curso />
+                    @endif
 
                     {{-- * Recorremos --}}
                     @foreach ($secciones as $seccion)

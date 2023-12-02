@@ -314,6 +314,13 @@ class usuarioController extends Controller
         }
     }
 
+    // * Lista de no admins
+    public function listaNoAdmins()
+    {
+        return view('sections.lista_usuarios_no_admin');
+    }
+
+
     //SECTION - Privadas ----------------
 
     // * Comprobar clave admin

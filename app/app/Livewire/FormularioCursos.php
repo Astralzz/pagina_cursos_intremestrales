@@ -33,7 +33,6 @@ class FormularioCursos extends Component
         'user_id', 'categoria_id', 'nombre', 'informacion',
         'tipo', 'nombre_instructor', 'sede',
         'fecha_inicio', 'fecha_final',
-
     ];
 
     protected $rules = [];

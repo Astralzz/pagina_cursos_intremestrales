@@ -53,6 +53,13 @@ Route::group(['prefix' => 'usuarios'], function () {
         'editar',
         [usuarioController::class, 'editar']
     )->name('usuario.editar');
+
+    //STUB - Listas
+    Route::group(['prefix' => 'lista'], function () {
+
+        // Completa
+        Route::get('no-admin', [usuarioController::class, 'listaNoAdmins'])->name('usuario.lista.no.admin');
+    });
 });
 
 
@@ -118,5 +125,4 @@ Route::group(['prefix' => 'cursos'], function () {
             Route::get('titulo', [cursoController::class, 'listaPorAceptarPorTitulo'])->name('curso.lista.espera.titulo');
         });
     });
-
 });
