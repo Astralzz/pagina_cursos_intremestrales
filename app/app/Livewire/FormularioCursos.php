@@ -25,6 +25,9 @@ class FormularioCursos extends Component
     // * usuario
     public $usuario;
 
+    // * Curso
+    public $curso;
+
     // * Categorias
     public $categorias_cursos;
 
@@ -38,6 +41,9 @@ class FormularioCursos extends Component
     protected $rules = [];
     protected $messages = [];
 
+    // * Accion
+    public $accionFom = "guardarCurso";
+
     //TODO - Constructor
     public function __construct()
     {
@@ -49,6 +55,27 @@ class FormularioCursos extends Component
 
         // Asignamos datos
         $this->user_id = $this->usuario->id;
+
+        // ? Usuario diferente de null
+        if (session()->has('infCursoEditar')) {
+
+            // Asignamos
+            $this->curso = session('infCursoEditar');
+
+            // Ponemos datos
+            $this->user_id = $this->curso->user_id;
+            $this->categoria_id = $this->curso->categoria_id;
+            $this->nombre = $this->curso->nombre;
+            $this->informacion = $this->curso->informacion;
+            $this->tipo = $this->curso->tipo;
+            $this->sede = $this->curso->sede;
+            $this->nombre_instructor = $this->curso->nombre_instructor;
+            $this->fecha_inicio = $this->curso->fecha_inicio;
+            $this->fecha_final = $this->curso->fecha_final;
+
+            // Actualizar
+            $this->accionFom = "actualizarCurso";
+        }
     }
 
     // * Validaciones
@@ -141,6 +168,38 @@ class FormularioCursos extends Component
 
         // Limpiamos
         $this->reset($this->variables);
+    }
+
+    // * Actualizar usuario
+    public function actualizarCurso()
+    {
+
+        // ? No existe
+        if (!$this->curso) {
+            // Lanzamos evento
+            $this->dispatch('alert-swall', [
+                'titulo' => 'Error',
+                'mensaje' => 'No se encontró el curso a editar',
+                'tipo' => 'error'
+            ]);
+            return;
+        }
+
+        // Validamos
+        $this->applyValidation();
+
+        // Obtenemos los datos validados
+        $validatedData = $this->getData();
+
+        // Actualizamos los campos del usuario
+        $this->curso->update($validatedData);
+
+        // Lanzamos evento
+        $this->dispatch('alert-swall', [
+            'titulo' => 'Exito',
+            'mensaje' => 'El curso se actualizo correctamente',
+            'tipo' => 'success'
+        ]);
     }
 
     public function render()

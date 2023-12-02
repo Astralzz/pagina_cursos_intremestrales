@@ -12,11 +12,23 @@
                 {{-- ! Boton de X --}}
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
+
+            {{-- ? Abrir modal automaticamente --}}
+            @if (session('infCursoEditar'))
+            <script>
+                $(document).ready(function() {
+                     // Abre el modal automáticamente cuando el documento esté listo
+                     $('#modal_registro_curso').modal('show');
+                 });
+            </script>
+            @endif
+
             {{-- Cuerpo del modal --}}
             <div class="modal-body text-dark">
 
                 {{-- TODO - Formulario --}}
-                <form id="formulario_curso" wire:submit.prevent="guardarCurso">
+                <form id="formulario_curso" wire:submit.prevent="{{$accionFom}}">
 
 
                     {{-- * - NOMBRE Y CATEGORIA --}}
