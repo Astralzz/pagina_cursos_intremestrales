@@ -84,7 +84,7 @@ class FormularioCursos extends Component
         return  [
             'user_id' => 'required|numeric',
             'categoria_id' => 'required|numeric',
-            'nombre' => 'required|unique:cursos,nombre|string|min:5|max:240',
+            'nombre' => 'required' .  ((!$this->curso) ? '|unique:users,email' : '') . '|string|min:5|max:240',
             'informacion' => 'nullable|string|min:5',
             'tipo' => 'nullable|in:PRESENCIAL,VIRTUAL',
             'nombre_instructor' => 'required|string|min:3|max:120',
