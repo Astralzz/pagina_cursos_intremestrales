@@ -15,6 +15,7 @@ class FormularioCursos extends Component
     public $categoria_id;
     public $nombre;
     public $informacion;
+    public $capacidad;
     public $tipo;
     public $nombre_instructor;
     public $sede;
@@ -34,8 +35,8 @@ class FormularioCursos extends Component
     // * Lista de variables
     public $variables = [
         'user_id', 'categoria_id', 'nombre', 'informacion',
-        'tipo', 'nombre_instructor', 'sede',
-        'fecha_inicio', 'fecha_final',
+        'capacidad', 'tipo', 'nombre_instructor',
+        'sede', 'fecha_inicio', 'fecha_final',
     ];
 
     protected $rules = [];
@@ -43,6 +44,8 @@ class FormularioCursos extends Component
 
     // * Accion
     public $accionFom = "guardarCurso";
+
+    protected $listeners = ['limpiarDatos' => 'limpiarDatos'];
 
     //TODO - Constructor
     public function __construct()
@@ -67,6 +70,7 @@ class FormularioCursos extends Component
             $this->categoria_id = $this->curso->categoria_id;
             $this->nombre = $this->curso->nombre;
             $this->informacion = $this->curso->informacion;
+            $this->capacidad = $this->curso->capacidad;
             $this->tipo = $this->curso->tipo;
             $this->sede = $this->curso->sede;
             $this->nombre_instructor = $this->curso->nombre_instructor;
@@ -78,6 +82,17 @@ class FormularioCursos extends Component
         }
     }
 
+    // * Método para limpiar datos
+    public function limpiarDatos()
+    {
+        // ? Existe curso
+        if ($this->curso) {
+            // Limpiamos los datos del componente
+            $this->reset($this->variables);
+            $this->accionFom = "guardarCurso";
+        }
+    }
+
     // * Validaciones
     protected function rules()
     {
@@ -86,6 +101,7 @@ class FormularioCursos extends Component
             'categoria_id' => 'required|numeric',
             'nombre' => 'required' .  ((!$this->curso) ? '|unique:users,email' : '') . '|string|min:5|max:240',
             'informacion' => 'nullable|string|min:5',
+            'capacidad' => 'required|integer|between:10,30',
             'tipo' => 'nullable|in:PRESENCIAL,VIRTUAL',
             'nombre_instructor' => 'required|string|min:3|max:120',
             'sede' => 'nullable|string|min:3|max:120',
@@ -109,6 +125,9 @@ class FormularioCursos extends Component
             'nombre.max' => 'El campo nombre debe tener como máximo 240 caracteres.',
             'informacion.string' => 'El campo informacion debe ser una cadena de texto.',
             'informacion.min' => 'El campo informacion debe tener al menos 5 caracteres.',
+            'capacidad.required' => 'El campo capacidad es requerido',
+            'capacidad.integer' => 'El campo capacidad debe ser un entero',
+            'capacidad.between' => 'El campo informacion debe tener de 10 a 30 de capacidad',
             'tipo.in' => 'El campo tipo debe ser "PRESENCIAL" o "VIRTUAL".',
             'nombre_instructor.required' => 'El campo instructor es requerido.',
             'nombre_instructor.string' => 'El campo instructor debe ser una cadena de texto.',

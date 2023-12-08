@@ -58,6 +58,12 @@ class User extends Model implements Authenticatable
         return $this->hasMany(Curso::class, 'user_id');
     }
 
+    public function inscripciones()
+    {
+        return $this->hasMany(InscripcionCurso::class, 'user_id');
+    }
+
+
     //SECTION - Autenticación
 
     // Identificador

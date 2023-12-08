@@ -15,9 +15,9 @@ $("#descargarPdf").on("click", function () {
     $.get(rutaPdf, function (response) {
         // Puedes agregar más lógica aquí si es necesario
         console.log("PDF generado y descargado");
-        console.log('====================================');
+        console.log("====================================");
         console.log(response);
-        console.log('====================================');
+        console.log("====================================");
 
         // Restaurar el estilo del botón
         $("#descargarPdf").html("Descargar PDF");
@@ -38,6 +38,17 @@ $("#descargarPdf").on("click", function () {
 });
 
 // Limpiamos datos
-$("#moodal_inf_curso").on("hidden.bs.modal", function () {
-    // Agrega acciones de limpieza aquí si es necesario
+$("#moodal_inf_curso").on("hidden.bs.modal", function () {});
+
+// Agrega un evento cuando el modal se cierra
+$("#modal_registro_curso").on("hidden.bs.modal", function () {
+
+    // ? Existe
+    if (Livewire?.dispatch) {
+        // Llama al método para limpiar los datos
+        Livewire.dispatch("limpiarDatos");
+        return;
+    }
+
+    console.error("No se encontró el obj livewire.dispatch")
 });

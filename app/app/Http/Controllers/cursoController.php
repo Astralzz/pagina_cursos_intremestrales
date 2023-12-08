@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class cursoController extends Controller
 {
@@ -197,6 +198,46 @@ class cursoController extends Controller
             ]);
         } catch (\Exception $e) {
             return back()->with('error_action_tabla', 'Error al ver curso, ' . $e->getMessage());
+        }
+    }
+
+
+    // * Inscribirse al curso por id
+    public function inscripcionCurso($id_curso, $id_usuario)
+    {
+        try {
+
+            // Buscamos el curso
+            $curso = $this->curso->findOrFail($id_curso);
+
+            // Verificamos si hay capacidad disponible
+            if ($curso->capacidad <= 0) {
+                throw new \Exception('No hay capacidad disponible para inscribirse en este curso.');
+            }
+
+            // Obtenemos el usuario
+            $usuario =  auth()->user();
+
+            // Verificamos si el usuario ya está inscrito en este curso
+            if (DB::table('inscripcion_cursos')->where('user_id', $id_usuario)->where('curso_id', $curso->id)->exists()) {
+                throw new \Exception('Ya estás inscrito en este curso.');
+            }
+
+            // Decrementamos la capacidad del curso en 1
+            $curso->decrement('capacidad');
+
+            // Insertamos valores en la tabla inscripcion_cursos
+            DB::table('inscripcion_cursos')->insert([
+                'user_id' => $usuario->id,
+                'curso_id' => $curso->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Devolver exito
+            return redirect()->back()->with('exito_action_tabla', 'Exito, Te has inscrito en el curso correctamente el curso correctamente');
+        } catch (\Exception $e) {
+            return back()->with('error_action_tabla', 'Error al inscribirse al curso, ' . $e->getMessage());
         }
     }
 

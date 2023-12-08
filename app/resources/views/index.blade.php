@@ -25,20 +25,20 @@
 
     {{-- ? Existe una sesion --}}
     @if (auth()->check())
-        @include('pages.home')
+    @include('pages.home')
     @else
-        @include('pages.login')
+    @include('pages.login')
     @endif
 
-    {{-- Scrips --}}
-    <script src="{{ asset('js/global.js') }}"></script>
-
-    {{-- SweetAlert2  --}}
+    {{-- SweetAlert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {{-- Scrip livewire --}}
     @livewireScripts
     @yield('scrips')
+
+    {{-- Scrips --}}
+    <script src="{{ asset('js/global.js') }}"></script>
 </body>
 
 </html>

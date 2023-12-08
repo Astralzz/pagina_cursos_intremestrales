@@ -81,6 +81,9 @@ Route::group(['prefix' => 'cursos'], function () {
     //STUB - Informacion de un curso por id
     Route::get('curso/inf/{id}', [cursoController::class, 'infCursoPorId'])->name('inf.curso.id');
 
+    //STUB - Inscripcion de un curso por id
+    Route::get('curso/inscribirse/{id_curso}/{id_usuario}', [cursoController::class, 'inscripcionCurso'])->name('inscribirse.curso.id');
+
     //STUB - Pre editar curso por id
     Route::get('curso/pre/editar/{id}', [cursoController::class, 'preEditarCursoPorId'])->name('pre.editar.curso.id');
 

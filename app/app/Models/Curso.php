@@ -21,6 +21,7 @@ class Curso extends Model
         'categoria_id',
         'nombre',
         'informacion',
+        'capacidad',
         'tipo',
         'nombre_instructor',
         'sede',
@@ -46,4 +47,12 @@ class Curso extends Model
     {
         return $this->belongsTo(Categoria_curso::class, 'categoria_id');
     }
+
+
+    // Tiene
+    public function inscripciones()
+    {
+        return $this->hasMany(InscripcionCurso::class, 'curso_id');
+    }
+
 }

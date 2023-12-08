@@ -36,6 +36,18 @@
                         {{-- NOMBRE --}}
                         <span class="input-group-text">TITULO<strong class="text-danger">*</strong></span>
                         <input wire:model.lazy="nombre" type="text" class="form-control">
+
+                        {{-- CAPASIDAD --}}
+                        <label class="input-group-text" for="capacidad">CAPACIDAD<strong
+                                class="text-danger">*</strong></label>
+                        <select wire:model.lazy="capacidad" class="form-select">
+                            <option value="" @if (isset($capacidad)) hidden @endif selected>
+                                Selecionar capacidad
+                            </option>
+                            {{-- Asigansmos de 10 a 30 --}}
+                            @for ($i = 10; $i <= 30; $i++) <option value="{{ $i }}">{{ $i }}</option>
+                                @endfor
+                        </select>
                     </div>
 
                     {{-- * - SEDE Y INSTRUCTOR --}}

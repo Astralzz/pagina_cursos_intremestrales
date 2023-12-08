@@ -31,7 +31,7 @@
         $listaVariables = ['nombre', 'usuario.nombre', 'informacion', 'tipo', 'sede', 'nombre_instructor', 'fecha_inicio', 'fecha_final'];
 
         // Acciones
-        $listaAcciones = ['ver'];
+        $listaAcciones = ['ver', 'inscribirse'];
     @endphp
 
     @section('section_lista_cursos_publicos')

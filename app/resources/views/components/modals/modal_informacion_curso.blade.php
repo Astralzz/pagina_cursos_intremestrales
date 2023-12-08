@@ -1,7 +1,7 @@
 {{-- * - DATOS PHP --}}
 @php
 // * Variables
-$variables = ['nombre', 'informacion', 'tipo', 'nombre_instructor', 'sede', 'fecha_inicio', 'fecha_final'];
+$variables = ['nombre', 'informacion', 'capacidad', 'tipo', 'nombre_instructor', 'sede', 'fecha_inicio', 'fecha_final'];
 
 // * Recorremos
 foreach ($variables as $variable) {
@@ -23,7 +23,6 @@ ${$variable} = session('infCurso')->$variable->nombre ?? 'N/A';
 }
 
 $id_curso = session('infCurso')->id ?? -1;
-
 
 @endphp
 
