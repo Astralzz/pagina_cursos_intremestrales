@@ -207,33 +207,27 @@ class cursoController extends Controller
     {
         try {
 
-            // Buscamos el curso
-            $curso = $this->curso->findOrFail($id_curso);
+            // Buscar el curso
+            $curso = Curso::findOrFail($id_curso);
 
-            // Verificamos si hay capacidad disponible
+            // Verificar si hay capacidad disponible
             if ($curso->capacidad <= 0) {
                 throw new \Exception('No hay capacidad disponible para inscribirse en este curso.');
             }
 
-            // Obtenemos el usuario
-            $usuario =  auth()->user();
+            // Obtener el usuario
+            $usuario = auth()->user();
 
-            // Verificamos si el usuario ya está inscrito en este curso
-            if (DB::table('inscripcion_cursos')->where('user_id', $id_usuario)->where('curso_id', $curso->id)->exists()) {
+            // Verificar si el usuario ya está inscrito en este curso
+            if ($curso->usuariosInscritos->contains($usuario)) {
                 throw new \Exception('Ya estás inscrito en este curso.');
             }
 
-            // Decrementamos la capacidad del curso en 1
+            // Decrementar la capacidad del curso en 1
             $curso->decrement('capacidad');
 
-            // Insertamos valores en la tabla inscripcion_cursos
-            DB::table('inscripcion_cursos')->insert([
-                'user_id' => $usuario->id,
-                'curso_id' => $curso->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
+            // Relacionar usuario con curso
+            $curso->usuariosInscritos()->attach($usuario->id);
             // Devolver exito
             return redirect()->back()->with('exito_action_tabla', 'Exito, Te has inscrito en el curso correctamente el curso correctamente');
         } catch (\Exception $e) {
@@ -392,6 +386,12 @@ class cursoController extends Controller
             return view('sections.lista_cursos_publicos')
                 ->with('error_action_tabla', 'Error al obtener la lista de cursos, ' . $e->getMessage());
         }
+    }
+
+    // * Lista publica
+    public function listaInscritos()
+    {
+        return view('sections.lista-cursos-inscritos');
     }
 
     // * Lista por aceptar

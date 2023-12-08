@@ -43,6 +43,11 @@ class Curso extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function usuariosInscritos()
+    {
+        return $this->belongsToMany(User::class, 'inscripcion_cursos', 'curso_id', 'user_id');
+    }
+
     public function categoria()
     {
         return $this->belongsTo(Categoria_curso::class, 'categoria_id');
@@ -54,5 +59,4 @@ class Curso extends Model
     {
         return $this->hasMany(InscripcionCurso::class, 'curso_id');
     }
-
 }

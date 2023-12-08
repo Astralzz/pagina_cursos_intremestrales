@@ -118,6 +118,12 @@ Route::group(['prefix' => 'cursos'], function () {
             Route::get('titulo', [cursoController::class, 'listaPublicaPorTitulo'])->name('curso.lista.publica.titulo');
         });
 
+        // Inscritos
+        Route::group(['prefix' => 'inscritos'], function () {
+            // Completa
+            Route::get('total', [cursoController::class, 'listaInscritos'])->name('curso.lista.inscritos');
+        });
+
         // Administrador
         Route::group(['prefix' => 'admin'], function () {
 

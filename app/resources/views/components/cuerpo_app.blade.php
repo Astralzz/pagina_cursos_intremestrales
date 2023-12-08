@@ -7,6 +7,7 @@
           @yield('section_lista_cursos')
           @yield('section_lista_cursos_publicos')
           @yield('section_lista_usuarios_no_admin')
+          @yield('section_lista_cursos-inscritos')
 
       @else
           <br />

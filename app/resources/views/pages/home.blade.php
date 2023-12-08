@@ -33,6 +33,12 @@ $secciones = [
 ],
 [
 'permiso' => true,
+'titulo' => 'Cursos inscritos',
+'ruta' => route('curso.lista.inscritos'),
+'icono' => 'bi bi-list-columns',
+],
+[
+'permiso' => true,
 'titulo' => 'Cursos publicos',
 'ruta' => route('curso.lista.publica'),
 'icono' => 'bi bi-globe-americas',

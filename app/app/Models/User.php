@@ -60,7 +60,7 @@ class User extends Model implements Authenticatable
 
     public function inscripciones()
     {
-        return $this->hasMany(InscripcionCurso::class, 'user_id');
+        return $this->belongsToMany(Curso::class, 'inscripcion_cursos', 'user_id', 'curso_id');
     }
 
 
