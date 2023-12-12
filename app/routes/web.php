@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\cursoController;
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\usuarioController;
 use Illuminate\Support\Facades\Route;
 
@@ -107,6 +108,9 @@ Route::group(['prefix' => 'cursos'], function () {
 
         // Pos titulo
         Route::get('titulo/{id}', [cursoController::class, 'listaPorTitulo'])->name('curso.lista.titulo');
+
+        // Exportar excel
+        Route::get('/exportar-cursos-publicos/excel', [ExcelController::class, 'exportPublicos'])->name('exportar.cursos.publicos');
 
         // Publica
         Route::group(['prefix' => 'publica'], function () {

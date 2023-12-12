@@ -168,7 +168,7 @@ class consoleController extends Controller
 
             // ? Hay roles
             if (empty($rolesDisponibles)) {
-                throw new \Exception('No hay roles disponibles para crear cursos.');
+                throw new \Exception('No hay roles disponibles para crear usuarios.');
             }
 
             // Recorremos

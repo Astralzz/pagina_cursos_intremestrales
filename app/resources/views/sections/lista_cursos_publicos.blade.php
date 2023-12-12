@@ -26,6 +26,12 @@
             'ruta' => route('curso.lista.publica.titulo'),
         ];
 
+            // Ruta para buscar
+            $datosExcel = [
+            'titulo' => 'Crear Excel',
+            'ruta' => route('exportar.cursos.publicos'),
+        ];
+
         // Columnas
         $listaColumnas = ['Titulo', 'Creador', 'informacion', 'Tipo', 'Sede', 'Instructor', 'Inicio', 'Final'];
         $listaVariables = ['nombre', 'usuario.nombre', 'informacion', 'tipo', 'sede', 'nombre_instructor', 'fecha_inicio', 'fecha_final'];

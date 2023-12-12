@@ -31,6 +31,13 @@
             </div>
             @endisset
 
+            {{-- Excel --}}
+            @isset($datosExcel)
+            <a class="btn btn-outline-success" href="{{$datosExcel['ruta']}}" type="submit">{{
+                $datosExcel['titulo']
+                }}</a>
+            @endisset
+
             {{-- Barra de busqueda --}}
             <form class="d-flex" method="GET" action="{{ isset($datosBuscar) ? $datosBuscar['ruta'] : '#' }}">
                 @csrf
@@ -150,7 +157,8 @@
                     </a>
                     @endif
                     @if (in_array('inscribirse', $listaAcciones))
-                    <a href="{{ route('inscribirse.curso.id', ['id_curso' => $curso->id, 'id_usuario' => $usuario->id]) }}" class="btn btn-outline-dark">
+                    <a href="{{ route('inscribirse.curso.id', ['id_curso' => $curso->id, 'id_usuario' => $usuario->id]) }}"
+                        class="btn btn-outline-dark">
                         <i class="bi bi-file-earmark-plus-fill"></i>
                     </a>
                     @endif
