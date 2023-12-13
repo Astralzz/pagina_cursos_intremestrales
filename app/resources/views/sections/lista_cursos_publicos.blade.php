@@ -26,7 +26,7 @@
             'ruta' => route('curso.lista.publica.titulo'),
         ];
 
-            // Ruta para buscar
+            // Ruta para excel
             $datosExcel = [
             'titulo' => 'Crear Excel',
             'ruta' => route('exportar.cursos.publicos'),

@@ -24,6 +24,8 @@ ${$variable} = session('infCurso')->$variable->nombre ?? 'N/A';
 
 $id_curso = session('infCurso')->id ?? -1;
 
+$status = session('infCurso') && session('infCurso')->status === 'ACEPTADO' ? true : false;
+
 @endphp
 
 {{-- TODO - FORMULARIO USUARIO --}}
@@ -87,6 +89,13 @@ $id_curso = session('infCurso')->id ?? -1;
                 {{-- Botón de descarga de PDF con estilo Bootstrap --}}
                 <a class="btn btn-primary mt-3" href="{{ route('curso.generar.pdf', ['id' => $id_curso]) }}">Descargar
                     PDF</a>
+
+                @if (isset($status) && $status)
+                <a class="btn btn-primary mt-3"
+                    href="{{ route('exportar.usuarios.curso', ['id' => $id_curso]) }}">Descargar
+                    EXCEL</a>
+                @endif
+
 
                 @else
                 {{-- Mensaje si no hay información del curso --}}

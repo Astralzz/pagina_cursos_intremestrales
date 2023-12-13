@@ -97,6 +97,9 @@ Route::group(['prefix' => 'cursos'], function () {
     //STUB - Crear pdf
     Route::get('/generar-pdf/{id}', [cursoController::class, 'crearPdf'])->name('curso.generar.pdf');
 
+    //STUB - Exportar excel
+    Route::get('/exportar-usuarios-inscritos/excel/{id}', [ExcelController::class, 'exportAlumnosCurso'])->name('exportar.usuarios.curso');
+
     //STUB - Listas
     Route::group(['prefix' => 'lista'], function () {
 
